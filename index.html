@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="sl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ELUCY design</title>
+    <meta
+      name="description"
+      content="Osnovna spletna stran za ELUCY design v turkizni, beli in kapucino barvi."
+    >
+    <style>
+      :root {
+        --turquoise: #18b7b5;
+        --turquoise-dark: #0f7778;
+        --turquoise-soft: #dff6f4;
+        --white: #ffffff;
+        --cappuccino: #c7a17a;
+        --cappuccino-dark: #7c5f45;
+        --ink: #1f2c2e;
+        --muted: #657679;
+        --line: rgba(31, 44, 46, 0.12);
+        --shadow: 0 18px 42px rgba(31, 44, 46, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(24, 183, 181, 0.11), transparent 34%),
+          linear-gradient(305deg, rgba(199, 161, 122, 0.18), transparent 42%),
+          var(--white);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        width: min(1120px, calc(100% - 32px));
+        min-height: 76px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        color: var(--white);
+        background: linear-gradient(135deg, var(--turquoise), var(--cappuccino));
+        box-shadow: 0 10px 24px rgba(24, 183, 181, 0.24);
+      }
+
+      .brand-name {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 7px;
+        font-size: 1.05rem;
+      }
+
+      .brand-script,
+      .hero-script {
+        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-weight: 500;
+        color: var(--cappuccino-dark);
+      }
+
+      .brand-script {
+        font-size: 1.18em;
+      }
+
+      .menu {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .menu a {
+        padding: 10px 13px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .menu a:hover {
+        color: var(--turquoise-dark);
+        background: var(--turquoise-soft);
+      }
+
+      .nav-cta,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        font-weight: 700;
+      }
+
+      .nav-cta {
+        color: var(--white);
+        background: var(--turquoise-dark);
+      }
+
+      .hero {
+        min-height: calc(100vh - 76px);
+        display: grid;
+        align-items: center;
+        padding: 72px 0 56px;
+      }
+
+      .hero-inner,
+      .section-inner {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 42px;
+        align-items: center;
+      }
+
+      .hero-copy {
+        max-width: none;
+      }
+
+      .eyebrow {
+        margin: 0 0 16px;
+        color: var(--turquoise-dark);
+        font-size: 0.83rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 780px;
+        margin: 0;
+        font-size: clamp(3rem, 7vw, 6.8rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .hero-title-main,
+      .hero-script {
+        display: block;
+      }
+
+      .hero-script {
+        margin-top: 8px;
+        font-size: 0.52em;
+        line-height: 1.05;
+        color: var(--cappuccino-dark);
+        transform: rotate(-2deg);
+        transform-origin: left center;
+      }
+
+      .hero-text {
+        max-width: 610px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 1.16rem;
+      }
+
+      .hero-handwritten {
+        max-width: 1060px;
+        margin: 28px auto 0;
+        color: var(--cappuccino-dark);
+        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-size: clamp(1rem, 1.7vw, 1.42rem);
+        line-height: 1.65;
+        text-align: center;
+      }
+
+      .hero-handwritten span {
+        display: block;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 34px;
+      }
+
+      .button-primary {
+        color: var(--white);
+        background: var(--turquoise);
+        box-shadow: 0 14px 26px rgba(24, 183, 181, 0.24);
+      }
+
+      .button-secondary {
+        color: var(--cappuccino-dark);
+        border-color: rgba(124, 95, 69, 0.28);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .textile-carousel {
+        position: relative;
+        min-height: 265px;
+        margin-top: 58px;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        box-shadow: var(--shadow);
+      }
+
+      .textile-carousel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.18) 46%, rgba(255, 255, 255, 0.6)),
+          rgba(255, 255, 255, 0.24);
+        pointer-events: none;
+      }
+
+      .textile-carousel img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        filter: brightness(1.1) saturate(0.78) contrast(0.92);
+        animation: textileFade 18s infinite;
+      }
+
+      .textile-carousel img:nth-child(2) {
+        animation-delay: 6s;
+      }
+
+      .textile-carousel img:nth-child(3) {
+        animation-delay: 12s;
+      }
+
+      @keyframes textileFade {
+        0%,
+        27% {
+          opacity: 1;
+        }
+
+        34%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      section {
+        padding: 74px 0;
+      }
+
+      .section-title {
+        max-width: 680px;
+        margin: 0 0 28px;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        min-height: 190px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .card-number {
+        color: var(--cappuccino-dark);
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .card h3 {
+        margin: 18px 0 10px;
+        font-size: 1.25rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .contact-band {
+        color: var(--white);
+        background: linear-gradient(135deg, var(--turquoise-dark), #1aa6a4 48%, var(--cappuccino));
+      }
+
+      .contact-layout {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      .contact-band h2 {
+        max-width: 680px;
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.05;
+      }
+
+      .contact-band p {
+        max-width: 560px;
+        margin: 16px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      .contact-band .button {
+        flex: 0 0 auto;
+        color: var(--turquoise-dark);
+        background: var(--white);
+      }
+
+      .site-footer {
+        padding: 28px 0;
+        color: var(--muted);
+        background: var(--white);
+      }
+
+      .footer-inner {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        font-size: 0.94rem;
+      }
+
+      @media (max-width: 860px) {
+        .nav {
+          min-height: auto;
+          padding: 16px 0;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .menu {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+
+        .nav-cta {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 54px;
+        }
+
+        .hero-grid,
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        .textile-carousel {
+          min-height: 220px;
+        }
+
+        .contact-layout,
+        .footer-inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .menu a {
+          padding: 9px 10px;
+          font-size: 0.9rem;
+        }
+
+        h1 {
+          font-size: 3rem;
+        }
+
+        .hero-text {
+          font-size: 1rem;
+        }
+
+        .hero-actions .button {
+          width: 100%;
+        }
+
+        .textile-carousel {
+          min-height: 190px;
+          margin-top: 36px;
+        }
+
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Glavni meni">
+        <a class="brand" href="#domov" aria-label="ELUCY design domov">
+          <span class="brand-name">
+            <span>ELUCY</span>
+            <span class="brand-script">design</span>
+          </span>
+        </a>
+
+        <div class="menu">
+          <a href="#domov">Domov</a>
+          <a href="#storitve">Izdelki</a>
+          <a href="konfigurator.html">Oblikovalnik</a>
+          <a href="#o-nas">O nas</a>
+          <a href="#kontakt">Kontakt</a>
+        </div>
+
+        <a class="nav-cta" href="konfigurator.html">Konfigurator majic</a>
+      </nav>
+    </header>
+
+    <main id="domov">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <p class="eyebrow">Tisk & personalizacija</p>
+              <h1 id="hero-title">
+                <span class="hero-title-main">ELUCY</span>
+                <span class="hero-script">design</span>
+              </h1>
+              <p class="hero-handwritten">
+                <span>Ko ne rabiš biti designer ninja.</span>
+                <span>Ko ne veš kaj pomeni CMYK, DTF ali Vektor.</span>
+                <span>Potem si na pravi strani.</span>
+                <span>Naloži sliko ali izberi iz naše ponudbe.</span>
+              </p>
+              <div class="hero-actions">
+                <a class="button button-primary" href="konfigurator.html">Oblikuj majico</a>
+                <a class="button button-secondary" href="#kontakt">Kontakt</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="textile-carousel" aria-label="Menjajoci trak tekstilnih izdelkov">
+            <img
+              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19fa1db90c8191b73c7624432ce971.png"
+              alt="Tekstilni izdelki za tisk v beli, turkizni in kapucino barvi"
+            >
+            <img
+              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19feec08808191a0349e0a4b5ae551.png"
+              alt="Zlozene majice in tekstil za personalizacijo"
+            >
+            <img
+              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19ff14391c8191813b145dd1efa07d.png"
+              alt="Majice, torba in tekstilni vzorci za tisk"
+            >
+          </div>
+        </div>
+      </section>
+
+      <section id="storitve" aria-labelledby="services-title">
+        <div class="section-inner">
+          <h2 class="section-title" id="services-title">Izdelki in storitve</h2>
+          <div class="cards">
+            <article class="card">
+              <span class="card-number">01</span>
+              <h3>Tisk na majice</h3>
+              <p>Personalizirane majice za posameznike, ekipe, dogodke in podjetja.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">02</span>
+              <h3>Promo izdelki</h3>
+              <p>Tisk na izdelke, ki pomagajo znamki ostati vidna in prepoznavna.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">03</span>
+              <h3>Priprava za tisk</h3>
+              <p>Pregled datotek, postavitev dizajna in osnovna graficna priprava.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="oblikovalnik" aria-labelledby="projects-title">
+        <div class="section-inner">
+          <h2 class="section-title" id="projects-title">Oblikovalnik majic</h2>
+          <div class="cards">
+            <article class="card">
+              <span class="card-number">Korak 1</span>
+              <h3>Izbira izdelka</h3>
+              <p>Stranka izbere majico, velikost, barvo in osnovni tip izdelka.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">Korak 2</span>
+              <h3>Dodaj dizajn</h3>
+              <p>Dodajanje napisa, logotipa ali grafike neposredno na predogled majice.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">Korak 3</span>
+              <h3>Oddaja narocila</h3>
+              <p>Ko je dizajn pripravljen, gre povprasevanje ali narocilo naprej v tisk.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="o-nas" aria-labelledby="about-title">
+        <div class="section-inner">
+          <h2 class="section-title" id="about-title">O ELUCY design</h2>
+          <div class="cards">
+            <article class="card">
+              <span class="card-number">Namen</span>
+              <h3>Personalizacija brez zapletov</h3>
+              <p>Strankam zelimo omogociti enostavno pot od ideje do izdelka za tisk.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">Fokus</span>
+              <h3>Majice in tiskani izdelki</h3>
+              <p>Stran bo usmerjena v majice, promo izdelke in pregledno oddajo povprasevanja.</p>
+            </article>
+            <article class="card">
+              <span class="card-number">Naprej</span>
+              <h3>Vticnik za dizajn</h3>
+              <p>Kasneje lahko dodava pravi konfigurator z barvami, napisi, slikami in predogledom.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact-band" id="kontakt" aria-labelledby="contact-title">
+        <div class="section-inner contact-layout">
+          <div>
+            <h2 id="contact-title">Pripravimo tisk, ki izgleda cisto in profesionalno.</h2>
+            <p>
+              To je zacetna verzija strani. Naslednji korak je, da dodava prave izdelke,
+              ozadja, galerijo in kasneje se vticnik za oblikovanje majic.
+            </p>
+          </div>
+          <a class="button" href="mailto:info@elucydesign.si">info@elucydesign.si</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>ELUCY design</span>
+        <span>Turkizno. Belo. Kapucino.</span>
+      </div>
+    </footer>
+  </body>
+</html>

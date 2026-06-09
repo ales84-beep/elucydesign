@@ -1,0 +1,2907 @@
+<!doctype html>
+<html lang="sl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Konfigurator majic | ELUCY design</title>
+    <meta
+      name="description"
+      content="Osnovna lupina konfiguratorja majic za ELUCY design."
+    >
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --turquoise: #18b7b5;
+        --turquoise-dark: #0f7778;
+        --turquoise-soft: #dff6f4;
+        --white: #ffffff;
+        --cappuccino: #c7a17a;
+        --cappuccino-soft: #f1e6db;
+        --cappuccino-dark: #7c5f45;
+        --ink: #1f2c2e;
+        --muted: #657679;
+        --line: rgba(31, 44, 46, 0.12);
+        --shadow: 0 18px 42px rgba(31, 44, 46, 0.12);
+        --shirt-color: #ffffff;
+        --print-scale: 1;
+        --control-counter-scale: 1;
+        --mini-print-scale: 1;
+        --art-rotation: 0deg;
+        --art-flip: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(24, 183, 181, 0.11), transparent 34%),
+          linear-gradient(305deg, rgba(199, 161, 122, 0.18), transparent 42%),
+          var(--white);
+        line-height: 1.55;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        width: min(1320px, calc(100% - 32px));
+        min-height: 76px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 7px;
+        font-weight: 800;
+      }
+
+      .brand-script,
+      .script {
+        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-weight: 500;
+        color: var(--cappuccino-dark);
+      }
+
+      .brand-script {
+        font-size: 1.18em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .nav-links a {
+        padding: 10px 13px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+
+      .nav-links a:hover,
+      .nav-links .active {
+        color: var(--turquoise-dark);
+        background: var(--turquoise-soft);
+      }
+
+      .page {
+        width: min(1320px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 34px 0 52px;
+      }
+
+      .intro {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--turquoise-dark);
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.15rem, 4vw, 4rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .intro p {
+        max-width: 560px;
+        margin: 12px 0 0;
+        color: var(--muted);
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid rgba(124, 95, 69, 0.24);
+        border-radius: 8px;
+        color: var(--cappuccino-dark);
+        background: rgba(255, 255, 255, 0.72);
+        font-weight: 800;
+      }
+
+      .configurator {
+        display: grid;
+        grid-template-columns: minmax(230px, 0.42fr) minmax(0, 1.45fr) minmax(350px, 0.72fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .stage-card,
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .stage-card {
+        grid-column: 2;
+        min-height: 710px;
+        padding: 18px;
+      }
+
+      .stage {
+        position: relative;
+        min-height: 670px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(rgba(31, 44, 46, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(31, 44, 46, 0.035) 1px, transparent 1px),
+          linear-gradient(140deg, rgba(223, 246, 244, 0.7), rgba(255, 255, 255, 0.92) 44%, rgba(241, 230, 219, 0.72));
+        background-size: 36px 36px, 36px 36px, auto;
+      }
+
+      .stage-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 4;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        color: var(--turquoise-dark);
+        font-weight: 900;
+      }
+
+      .stage-tools {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 10px 24px rgba(31, 44, 46, 0.1);
+      }
+
+      .tool-button {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 8px;
+        color: var(--ink);
+        background: transparent;
+        font-size: 1.16rem;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .tool-button:hover {
+        background: var(--turquoise-soft);
+      }
+
+      .tool-divider {
+        width: 1px;
+        height: 26px;
+        background: var(--line);
+      }
+
+      .model-viewport {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+
+      .model-viewport canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .model-status {
+        display: none;
+      }
+
+      .print-zone {
+        position: absolute;
+        left: 50%;
+        top: 43%;
+        z-index: 5;
+        width: min(170px, 22%);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        transform: translate(-50%, -50%) rotate(calc(var(--art-rotation) * -1)) scale(var(--print-scale));
+        transform-origin: center;
+        border: 2px dashed rgba(24, 183, 181, 0.65);
+        border-radius: 8px;
+        background: transparent;
+        cursor: move;
+        user-select: none;
+        touch-action: none;
+        --frame-ratio: 1;
+      }
+
+      .print-zone.wide-design {
+        width: min(260px, 34%);
+        aspect-ratio: 3 / 1;
+      }
+
+      .print-zone.text-design {
+        width: min(calc(38px * var(--frame-ratio)), 34%);
+        aspect-ratio: var(--frame-ratio) / 1;
+      }
+
+      .print-zone.tall-design {
+        width: min(140px, 18%);
+        aspect-ratio: 0.72;
+      }
+
+      .print-zone.hidden-while-orbiting {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .resize-handle {
+        position: absolute;
+        right: -8px;
+        bottom: -8px;
+        z-index: 4;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--turquoise);
+        border-radius: 999px;
+        background: var(--white);
+        box-shadow: 0 4px 10px rgba(31, 44, 46, 0.18);
+        cursor: nwse-resize;
+        touch-action: none;
+      }
+
+      .delete-design {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        z-index: 5;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(31, 44, 46, 0.16);
+        border-radius: 999px;
+        color: var(--white);
+        background: rgba(31, 44, 46, 0.78);
+        cursor: pointer;
+        font-size: 0.86rem;
+        font-weight: 900;
+      }
+
+      .delete-design:hover {
+        background: #b43d3d;
+      }
+
+      .mode-hint {
+        position: absolute;
+        left: 50%;
+        bottom: -34px;
+        z-index: 4;
+        min-width: 86px;
+        padding: 5px 9px;
+        transform: translateX(-50%) scale(var(--control-counter-scale));
+        transform-origin: center;
+        border-radius: 999px;
+        color: var(--white);
+        background: rgba(31, 44, 46, 0.76);
+        font-size: 0.76rem;
+        font-weight: 900;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .rotate-handle {
+        position: absolute;
+        left: 50%;
+        top: -32px;
+        z-index: 4;
+        width: 18px;
+        height: 18px;
+        display: none;
+        transform: translateX(-50%);
+        border: 2px solid var(--cappuccino-dark);
+        border-radius: 999px;
+        background: var(--white);
+        box-shadow: 0 4px 10px rgba(31, 44, 46, 0.18);
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .rotate-handle::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        width: 1px;
+        height: 18px;
+        transform: translateX(-50%);
+        background: rgba(124, 95, 69, 0.55);
+      }
+
+      .print-zone.rotate-mode .resize-handle,
+      .mini-print.rotate-mode .resize-handle {
+        display: none;
+      }
+
+      .print-zone.rotate-mode .rotate-handle,
+      .mini-print.rotate-mode .rotate-handle {
+        display: block;
+      }
+
+      .print-art {
+        width: 74%;
+        height: 74%;
+        display: grid;
+        place-items: center;
+        transform: scaleX(var(--art-flip));
+        border-radius: 999px;
+        color: transparent;
+        background: transparent;
+        text-align: center;
+        font-size: clamp(0.82rem, 1.5vw, 1.05rem);
+        font-weight: 900;
+        line-height: 1.1;
+        opacity: 0;
+      }
+
+      .print-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      .side-stack {
+        display: contents;
+      }
+
+      .side-stack > .panel:first-child,
+      .side-stack > .panel:nth-of-type(3),
+      .side-stack > .bottom-actions {
+        grid-column: 3;
+      }
+
+      .side-stack > .panel:nth-of-type(2) {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        max-height: min(720px, calc(100vh - 120px));
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      .panel {
+        padding: 18px;
+      }
+
+      .panel h2,
+      .panel h3 {
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      .panel h2 {
+        font-size: 1.2rem;
+      }
+
+      .panel h3 {
+        font-size: 1rem;
+      }
+
+      .mockup-mini {
+        position: relative;
+        min-height: 270px;
+        margin-top: 14px;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background:
+          linear-gradient(45deg, rgba(31, 44, 46, 0.07) 25%, transparent 25%),
+          linear-gradient(-45deg, rgba(31, 44, 46, 0.07) 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, rgba(31, 44, 46, 0.07) 75%),
+          linear-gradient(-45deg, transparent 75%, rgba(31, 44, 46, 0.07) 75%);
+        background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+        background-size: 24px 24px;
+      }
+
+      .mini-shirt {
+        position: relative;
+        min-height: 218px;
+        display: grid;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 8px;
+      }
+
+      .mini-shirt.active {
+        border-color: rgba(24, 183, 181, 0.55);
+        background: rgba(223, 246, 244, 0.32);
+      }
+
+      .mini-shirt::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 52%;
+        width: 92px;
+        height: 136px;
+        transform: translate(-50%, -50%);
+        border-radius: 8px 8px 14px 14px;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.24), transparent 20% 80%, rgba(31, 44, 46, 0.06)),
+          var(--shirt-color);
+        box-shadow:
+          inset 0 0 0 1px rgba(31, 44, 46, 0.1),
+          0 10px 18px rgba(31, 44, 46, 0.08);
+      }
+
+      .mini-shirt::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 34px;
+        width: 146px;
+        height: 72px;
+        transform: translateX(-50%);
+        background:
+          radial-gradient(circle at 50% 22px, transparent 0 15px, rgba(31, 44, 46, 0.1) 16px 17px, var(--shirt-color) 18px 31px, transparent 32px),
+          linear-gradient(135deg, transparent 0 20%, var(--shirt-color) 21% 39%, transparent 40%),
+          linear-gradient(225deg, transparent 0 20%, var(--shirt-color) 21% 39%, transparent 40%);
+        pointer-events: none;
+      }
+
+      .mini-print {
+        position: absolute;
+        left: 50%;
+        top: 52%;
+        z-index: 2;
+        width: 54px;
+        height: 54px;
+        display: none;
+        place-items: center;
+        transform: translate(-50%, -50%) rotate(calc(var(--art-rotation) * -1)) scale(var(--mini-print-scale));
+        transform-origin: center;
+        border: 1px dashed rgba(24, 183, 181, 0.72);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.42);
+        cursor: move;
+        user-select: none;
+        touch-action: none;
+      }
+
+      .mini-print .resize-handle {
+        right: -7px;
+        bottom: -7px;
+        width: 14px;
+        height: 14px;
+      }
+
+      .mini-print .rotate-handle {
+        top: -26px;
+        width: 15px;
+        height: 15px;
+      }
+
+      .mini-shirt.has-design .mini-print {
+        display: grid;
+      }
+
+      .mini-print-art {
+        width: 78%;
+        height: 78%;
+        display: grid;
+        place-items: center;
+        transform: scaleX(var(--art-flip));
+        border-radius: 999px;
+        color: var(--white);
+        background: var(--turquoise);
+        font-size: 0.62rem;
+        font-weight: 900;
+        line-height: 1.1;
+        text-align: center;
+      }
+
+      .mini-print-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      .mini-label {
+        position: absolute;
+        left: 12px;
+        bottom: 10px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: var(--white);
+        background: rgba(31, 44, 46, 0.72);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .panel-actions,
+      .segmented,
+      .color-row,
+      .mockups {
+        display: flex;
+        gap: 10px;
+      }
+
+      .panel-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
+      }
+
+      .icon-button {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(31, 44, 46, 0.12);
+        border-radius: 8px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.88);
+        cursor: pointer;
+      }
+
+      .control-group {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .control-label {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .segmented {
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.76);
+      }
+
+      .segment {
+        flex: 1;
+        min-height: 38px;
+        border: 0;
+        border-radius: 8px;
+        color: var(--muted);
+        background: transparent;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .segment.active {
+        color: var(--white);
+        background: var(--turquoise-dark);
+      }
+
+      .upload-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+      }
+
+      .image-options {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .image-options input {
+        width: 17px;
+        height: 17px;
+        accent-color: var(--turquoise-dark);
+      }
+
+      .design-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .preset-strip {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 112px;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 4px 2px 12px;
+        scroll-snap-type: x mandatory;
+      }
+
+      .preset-design {
+        position: relative;
+        min-height: 112px;
+        display: grid;
+        place-items: center;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.76);
+        cursor: pointer;
+        scroll-snap-align: start;
+      }
+
+      .preset-design:hover {
+        border-color: rgba(24, 183, 181, 0.55);
+        background: var(--turquoise-soft);
+      }
+
+      .preset-mark {
+        width: 62px;
+        height: 62px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        color: var(--white);
+        background: var(--turquoise);
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .preset-mark.badge {
+        border-radius: 8px;
+        background: var(--cappuccino);
+      }
+
+      .preset-mark.script {
+        color: var(--cappuccino-dark);
+        background: transparent;
+        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-size: 1.1rem;
+      }
+
+      .preset-mark.outline {
+        color: var(--turquoise-dark);
+        background: transparent;
+        border: 3px solid var(--turquoise);
+      }
+
+      .preset-mark.dark {
+        background: var(--ink);
+      }
+
+      .preset-mark.rounded {
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--turquoise), var(--cappuccino));
+      }
+
+      .preset-svg {
+        width: 82%;
+        max-height: 70px;
+        object-fit: contain;
+      }
+
+      .preset-svg-label {
+        color: var(--ink);
+        font-size: 0.78rem;
+        font-weight: 900;
+        line-height: 1.1;
+      }
+
+      .preset-design.svg-fallback {
+        background:
+          linear-gradient(135deg, rgba(24, 183, 181, 0.12), rgba(199, 161, 122, 0.12)),
+          rgba(255, 255, 255, 0.76);
+      }
+
+      .preset-design.svg-fallback::before {
+        content: "SVG";
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border: 2px solid rgba(24, 183, 181, 0.55);
+        border-radius: 8px;
+        color: var(--turquoise-dark);
+        font-size: 0.82rem;
+        font-weight: 900;
+      }
+
+      .preset-design.svg-fallback .preset-svg {
+        display: none;
+      }
+
+      .text-tool {
+        display: grid;
+        gap: 10px;
+      }
+
+      .text-tool input,
+      .text-tool select,
+      .text-color-control {
+        min-height: 42px;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 12px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .text-options {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .text-color-control {
+        width: 62px;
+        padding: 5px;
+        cursor: pointer;
+      }
+
+      .text-color-presets {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 7px;
+      }
+
+      .text-color {
+        height: 30px;
+        border: 1px solid rgba(31, 44, 46, 0.16);
+        border-radius: 8px;
+        background: var(--text-swatch);
+        cursor: pointer;
+      }
+
+      .text-color.active {
+        border-color: var(--turquoise-dark);
+        box-shadow: 0 0 0 3px rgba(24, 183, 181, 0.16);
+      }
+
+      .design-chip {
+        min-height: 34px;
+        padding: 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.76);
+        font-size: 0.84rem;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .design-chip.active {
+        color: var(--white);
+        border-color: var(--turquoise-dark);
+        background: var(--turquoise-dark);
+      }
+
+      .file-label,
+      .primary-button,
+      .secondary-button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 16px;
+        border-radius: 8px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .file-label,
+      .secondary-button {
+        border: 1px solid rgba(124, 95, 69, 0.24);
+        color: var(--cappuccino-dark);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .primary-button {
+        border: 1px solid var(--turquoise-dark);
+        color: var(--white);
+        background: var(--turquoise-dark);
+      }
+
+      input[type="file"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+      }
+
+      .color-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px 14px;
+      }
+
+      .side-stack > .panel:nth-of-type(2) .color-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .swatch {
+        position: relative;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .swatch::before {
+        content: "";
+        display: block;
+        height: 32px;
+        margin-bottom: 5px;
+        border: 1px solid rgba(31, 44, 46, 0.14);
+        border-radius: 2px;
+        background: var(--swatch);
+      }
+
+      .swatch[data-pattern="heather"]::before {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(31, 44, 46, 0.1)),
+          repeating-linear-gradient(25deg, rgba(255, 255, 255, 0.22) 0 2px, rgba(31, 44, 46, 0.05) 2px 4px),
+          var(--swatch);
+      }
+
+      .swatch::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        width: 14px;
+        height: 8px;
+        border-left: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        transform: translateX(-50%) rotate(-45deg);
+      }
+
+      .swatch span {
+        display: block;
+        overflow-wrap: anywhere;
+        font-size: 0.76rem;
+        line-height: 1.2;
+      }
+
+      .swatch:hover::before {
+        border-color: rgba(24, 183, 181, 0.55);
+        box-shadow: 0 8px 16px rgba(31, 44, 46, 0.08);
+      }
+
+      .swatch.active {
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      .swatch.active::before {
+        border-color: var(--ink);
+      }
+
+      .swatch.active::after {
+        border-color: var(--ink);
+      }
+
+      .swatch.dark-check.active::after {
+        border-color: var(--white);
+      }
+
+      .swatch[style*="#ffffff"].active::before,
+      .swatch[style*="#f2efe6"].active::before,
+      .swatch[style*="#eadbc1"].active::before,
+      .swatch[style*="#f6e2e8"].active::before,
+      .swatch[style*="#d9dcdd"].active::before {
+        border-color: rgba(31, 44, 46, 0.55);
+      }
+
+      .mockups {
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .mockup-tile {
+        flex: 0 0 92px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .mockup-thumb {
+        height: 76px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 35%, transparent 0 12px, rgba(31, 44, 46, 0.06) 13px, transparent 14px),
+          linear-gradient(135deg, transparent 0 22%, var(--white) 23% 42%, transparent 43%),
+          linear-gradient(225deg, transparent 0 22%, var(--white) 23% 42%, transparent 43%),
+          linear-gradient(var(--turquoise-soft), var(--white));
+      }
+
+      .mockup-tile span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.25;
+      }
+
+      .bottom-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 1060px) {
+        .configurator {
+          grid-template-columns: 1fr;
+        }
+
+        .stage-card,
+        .side-stack > .panel:first-child,
+        .side-stack > .panel:nth-of-type(2),
+        .side-stack > .panel:nth-of-type(3),
+        .side-stack > .bottom-actions {
+          grid-column: auto;
+          grid-row: auto;
+        }
+
+        .side-stack {
+          display: grid;
+          gap: 18px;
+        }
+
+        .side-stack > .panel:nth-of-type(2) {
+          max-height: none;
+          overflow: visible;
+        }
+
+        .side-stack > .panel:nth-of-type(2) .color-row {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .stage-card,
+        .stage {
+          min-height: 560px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .nav,
+        .intro {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .nav-links {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+
+        .stage-card {
+          padding: 12px;
+        }
+
+        .stage {
+          min-height: 480px;
+        }
+
+        .upload-row,
+        .bottom-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Glavni meni">
+        <a class="brand" href="index.html" aria-label="ELUCY design domov">
+          <span>ELUCY</span>
+          <span class="brand-script">design</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html">Domov</a>
+          <a class="active" href="konfigurator.html">Konfigurator</a>
+          <a href="index.html#storitve">Izdelki</a>
+          <a href="index.html#kontakt">Kontakt</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">Osnovna lupina</p>
+          <h1>Konfigurator <span class="script">majic</span></h1>
+          <p>
+            Tehnicna postavitev za urejanje majice: velik predogled, spredaj/zadaj,
+            nalaganje slike, zoom, prestavljanje dizajna in izbira barve.
+          </p>
+        </div>
+        <a class="back-link" href="index.html">Nazaj na stran</a>
+      </div>
+
+      <section class="configurator" aria-label="Konfigurator majic">
+        <div class="stage-card">
+          <div class="stage" id="stage">
+            <div class="stage-badge">3D Pogled</div>
+
+            <div class="model-viewport" id="modelViewport" aria-label="3D predogled majice"></div>
+            <div class="print-zone" id="printZone" aria-label="Premakljiv dizajn na majici">
+              <div class="print-art" id="printArt">ELUCY<br>print</div>
+              <button class="delete-design" type="button" id="deleteActiveDesign" aria-label="Izbrisi izbrano grafiko">×</button>
+              <span class="rotate-handle" id="printRotateHandle" aria-hidden="true"></span>
+              <span class="resize-handle" id="printResizeHandle" aria-hidden="true"></span>
+              <span class="mode-hint" id="modeHint">Velikost</span>
+            </div>
+            <div class="model-status" id="modelStatus">Nalaganje 3D modela majice...</div>
+
+            <div class="stage-tools" aria-label="Orodja predogleda">
+              <button class="tool-button" type="button" id="zoomOut" aria-label="Zmanjsaj">-</button>
+              <button class="tool-button" type="button" id="zoomIn" aria-label="Povecaj">+</button>
+              <span class="tool-divider" aria-hidden="true"></span>
+              <button class="tool-button" type="button" id="resetDesign" aria-label="Ponastavi">↺</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side-stack" aria-label="Nastavitve konfiguratorja">
+          <div class="panel">
+            <h2>Knjižnica dizajnov</h2>
+            <div class="control-group">
+              <span class="control-label">Prednalozeni dizajni</span>
+              <div class="preset-strip" aria-label="Prednalozeni dizajni">
+                <button class="preset-design" type="button" data-preset="elucy">
+                  <span class="preset-mark">ELUCY<br>print</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="badge">
+                  <span class="preset-mark badge">CUSTOM<br>TEE</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="script">
+                  <span class="preset-mark script">made<br>easy</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="star">
+                  <span class="preset-mark outline">STAR<br>TEE</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="bold">
+                  <span class="preset-mark dark">BOLD<br>LOOK</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="wave">
+                  <span class="preset-mark rounded">WAVE<br>PRINT</span>
+                </button>
+                <button class="preset-design" type="button" data-preset="minimal">
+                  <span class="preset-mark">MINI<br>LOGO</span>
+                </button>
+                <button class="preset-design svg-fallback" type="button" data-svg-preset="assets/designs/be-the.svg" data-svg-label="Be the">
+                  <img class="preset-svg" src="assets/designs/be-the.svg" alt="Be the">
+                  <span class="preset-svg-label">Be the</span>
+                </button>
+                <button class="preset-design svg-fallback" type="button" data-svg-preset="assets/designs/chross.svg" data-svg-label="Chross">
+                  <img class="preset-svg" src="assets/designs/chross.svg" alt="Chross">
+                  <span class="preset-svg-label">Chross</span>
+                </button>
+                <button class="preset-design svg-fallback" type="button" data-svg-preset="assets/designs/heart.svg" data-svg-label="Heart">
+                  <img class="preset-svg" src="assets/designs/heart.svg" alt="Heart">
+                  <span class="preset-svg-label">Heart</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Bitna slika</span>
+              <div class="upload-row">
+                <label class="file-label" for="imageUpload">Nalozi sliko</label>
+                <label class="file-label" for="svgUpload">Dodaj SVG</label>
+                <button class="secondary-button" type="button" id="removeImage">Odstrani</button>
+                <input id="imageUpload" type="file" accept="image/*">
+                <input id="svgUpload" type="file" accept=".svg,image/svg+xml">
+              </div>
+              <label class="image-options">
+                <input id="removeWhiteBackground" type="checkbox" checked>
+                <span>Odstrani belo ozadje</span>
+              </label>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Dodaj tekst</span>
+              <div class="text-tool">
+                <input id="textInput" type="text" placeholder="Vpiši tekst">
+                <select id="fontSelect" aria-label="Izberi pisavo">
+                  <option value="Inter, Arial, sans-serif">Clean sans</option>
+                  <option value="Arial Black, Arial, sans-serif">Bold sans</option>
+                  <option value="Georgia, serif">Classic serif</option>
+                  <option value="Segoe Script">Ročna pisava</option>
+                  <option value="Impact">Močna pisava</option>
+                </select>
+                <div class="text-options">
+                  <div class="text-color-presets" aria-label="Barve teksta">
+                    <button class="text-color active" type="button" style="--text-swatch: #0f7778" data-text-color="#0f7778" aria-label="Turkizna"></button>
+                    <button class="text-color" type="button" style="--text-swatch: #1f2c2e" data-text-color="#1f2c2e" aria-label="Temna"></button>
+                    <button class="text-color" type="button" style="--text-swatch: #ffffff" data-text-color="#ffffff" aria-label="Bela"></button>
+                    <button class="text-color" type="button" style="--text-swatch: #c7a17a" data-text-color="#c7a17a" aria-label="Kapucino"></button>
+                    <button class="text-color" type="button" style="--text-swatch: #e60021" data-text-color="#e60021" aria-label="Rdeca"></button>
+                    <button class="text-color" type="button" style="--text-swatch: #000000" data-text-color="#000000" aria-label="Crna"></button>
+                  </div>
+                  <input class="text-color-control" id="textColor" type="color" value="#0f7778" aria-label="Poljubna barva teksta">
+                </div>
+                <button class="primary-button" type="button" id="addTextDesign">Dodaj tekst</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Grafike na majici</span>
+              <div class="design-list" id="designList" aria-label="Grafike na majici"></div>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Transformacije slike</span>
+              <div class="segmented" role="group" aria-label="Transformacije slike">
+                <button class="segment" type="button" id="flipImage">Zrcali</button>
+                <button class="segment" type="button" id="resetTransform">Reset</button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="panel">
+            <h3>Barva majice</h3>
+            <div class="control-group">
+              <div class="color-row" aria-label="Moznosti barve majice">
+                <button class="swatch active" type="button" style="--swatch: #ffffff" data-color="#ffffff" aria-label="White"><span>White</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #000000" data-color="#000000" aria-label="Black"><span>Black</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #202733" data-color="#202733" aria-label="Navy"><span>Navy</span></button>
+                <button class="swatch" type="button" style="--swatch: #b8bbba" data-color="#b8bbba" data-pattern="heather" aria-label="Sport Grey Heather"><span>Sport Grey (Heather)</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #1d5798" data-color="#1d5798" aria-label="Royal Blue"><span>Royal Blue</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #e60021" data-color="#e60021" aria-label="Red"><span>Red</span></button>
+                <button class="swatch" type="button" style="--swatch: #f2efe6" data-color="#f2efe6" aria-label="Natural"><span>Natural</span></button>
+                <button class="swatch" type="button" style="--swatch: #eadbc1" data-color="#eadbc1" aria-label="Sand"><span>Sand</span></button>
+                <button class="swatch" type="button" style="--swatch: #ffe53a" data-color="#ffe53a" aria-label="Solar Yellow"><span>Solar Yellow</span></button>
+                <button class="swatch" type="button" style="--swatch: #ffc447" data-color="#ffc447" aria-label="Gold"><span>Gold</span></button>
+                <button class="swatch" type="button" style="--swatch: #f2a000" data-color="#f2a000" aria-label="Apricot"><span>Apricot</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #f04a17" data-color="#f04a17" aria-label="Orange"><span>Orange</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #d84800" data-color="#d84800" aria-label="Urban Orange"><span>Urban Orange</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #ef4635" data-color="#ef4635" aria-label="Sunset Orange"><span>Sunset Orange</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #ed0015" data-color="#ed0015" aria-label="Fire Red"><span>Fire Red</span></button>
+                <button class="swatch" type="button" style="--swatch: #f6e2e8" data-color="#f6e2e8" aria-label="Orchid Pink"><span>Orchid Pink</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #d40066" data-color="#d40066" aria-label="Sorbet"><span>Sorbet</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #5a2744" data-color="#5a2744" aria-label="Burgundy"><span>Burgundy</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #35adbd" data-color="#35adbd" aria-label="Swimming Pool"><span>Swimming Pool</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #0996bb" data-color="#0996bb" aria-label="Atoll"><span>Atoll</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #087d8e" data-color="#087d8e" aria-label="Diva Blue"><span>Diva Blue</span></button>
+                <button class="swatch" type="button" style="--swatch: #7bb2d5" data-color="#7bb2d5" aria-label="Sky Blue"><span>Sky Blue</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #497c9d" data-color="#497c9d" aria-label="Stone Blue"><span>Stone Blue</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #15134f" data-color="#15134f" aria-label="Navy Blue"><span>Navy Blue</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #3f6091" data-color="#3f6091" aria-label="Cobalt Blue"><span>Cobalt Blue</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #6c639b" data-color="#6c639b" aria-label="Millennial Lilac"><span>Millennial Lilac</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #3e1e64" data-color="#3e1e64" aria-label="Radiant Purple"><span>Radiant Purple</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #2a0c4d" data-color="#2a0c4d" aria-label="Urban Purple"><span>Urban Purple</span></button>
+                <button class="swatch" type="button" style="--swatch: #b7ff00" data-color="#b7ff00" aria-label="Pixel Lime"><span>Pixel Lime</span></button>
+                <button class="swatch" type="button" style="--swatch: #8abd28" data-color="#8abd28" aria-label="Orchid Green"><span>Orchid Green</span></button>
+                <button class="swatch" type="button" style="--swatch: #96c7c1" data-color="#96c7c1" aria-label="Millennial Mint"><span>Millennial Mint</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #00884f" data-color="#00884f" aria-label="Kelly Green"><span>Kelly Green</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #00541f" data-color="#00541f" aria-label="Bottle Green"><span>Bottle Green</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #3e473a" data-color="#3e473a" aria-label="Urban Khaki"><span>Urban Khaki</span></button>
+                <button class="swatch" type="button" style="--swatch: #d9dcdd" data-color="#d9dcdd" aria-label="Ash Heather"><span>Ash (Heather)</span></button>
+                <button class="swatch" type="button" style="--swatch: #c2c7c9" data-color="#c2c7c9" aria-label="Pacific Grey"><span>Pacific Grey</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #26353d" data-color="#26353d" aria-label="Dark Grey Solid"><span>Dark Grey (Solid)</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #17222c" data-color="#17222c" aria-label="Used Black"><span>Used Black</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #4b1b12" data-color="#4b1b12" aria-label="Brown"><span>Brown</span></button>
+                <button class="swatch dark-check" type="button" style="--swatch: #8a6544" data-color="#8a6544" aria-label="Chocolate"><span>Chocolate</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Podobni izdelki</h3>
+            <div class="control-group">
+              <div class="mockups" aria-label="Podobni mockupi">
+                <div class="mockup-tile">
+                  <div class="mockup-thumb"></div>
+                  <span>Basic T-shirt</span>
+                </div>
+                <div class="mockup-tile">
+                  <div class="mockup-thumb"></div>
+                  <span>Premium shirt</span>
+                </div>
+                <div class="mockup-tile">
+                  <div class="mockup-thumb"></div>
+                  <span>Oversize majica</span>
+                </div>
+                <div class="mockup-tile">
+                  <div class="mockup-thumb"></div>
+                  <span>Otroška majica</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-actions">
+            <button class="secondary-button" type="button">Shrani osnutek</button>
+            <button class="primary-button" type="button">Nadaljuj na povprasevanje</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+      const root = document.documentElement;
+      const modelViewport = document.querySelector("#modelViewport");
+      const modelStatus = document.querySelector("#modelStatus");
+      const printZone = document.querySelector("#printZone");
+      const printResizeHandle = document.querySelector("#printResizeHandle");
+      const printRotateHandle = document.querySelector("#printRotateHandle");
+      const deleteActiveDesign = document.querySelector("#deleteActiveDesign");
+      const modeHint = document.querySelector("#modeHint");
+      const printArt = document.querySelector("#printArt");
+      const upload = document.querySelector("#imageUpload");
+      const svgUpload = document.querySelector("#svgUpload");
+      const removeWhiteBackground = document.querySelector("#removeWhiteBackground");
+      const removeImage = document.querySelector("#removeImage");
+      const flipImage = document.querySelector("#flipImage");
+      const resetTransform = document.querySelector("#resetTransform");
+      const designList = document.querySelector("#designList");
+      const textInput = document.querySelector("#textInput");
+      const fontSelect = document.querySelector("#fontSelect");
+      const textColor = document.querySelector("#textColor");
+      const addTextDesign = document.querySelector("#addTextDesign");
+      const modelUrl = "assets/models/tshirt/T_shirt_gltf.zip.gltf";
+      let scale = 1;
+      let miniScale = 1;
+      let offsetX = 0;
+      let offsetY = 0;
+      let miniOffsetX = 0;
+      let miniOffsetY = 0;
+      let dragging = false;
+      let draggingFromCanvas = false;
+      let miniDragging = false;
+      let resizing = false;
+      let miniResizing = false;
+      let rotating = false;
+      let miniRotating = false;
+      let dragMoved = false;
+      let miniDragMoved = false;
+      let pointerOverPrint = false;
+      let startX = 0;
+      let startY = 0;
+      let miniStartX = 0;
+      let miniStartY = 0;
+      let resizeStartX = 0;
+      let resizeStartScale = 1;
+      let miniResizeStartX = 0;
+      let miniResizeStartScale = 1;
+      let rotateStartAngle = 0;
+      let rotateStartRotation = 0;
+      let miniRotateStartAngle = 0;
+      let miniRotateStartRotation = 0;
+      let artRotation = 0;
+      let artFlip = 1;
+      let artMode = "resize";
+      let shirtModel = null;
+      let shirtMaterials = [];
+      let designs = [];
+      let activeDesign = null;
+      let designIdCounter = 0;
+      let selectedSide = "front";
+      let uploadedImageUrl = "";
+      let baseCameraDistance = 0;
+      let lastDraftDecalUpdate = 0;
+      const raycaster = new THREE.Raycaster();
+
+      const scene = new THREE.Scene();
+      scene.background = null;
+
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+      camera.position.set(0, 0.25, 4.2);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      modelViewport.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.enablePan = false;
+      controls.minDistance = 1.4;
+      controls.maxDistance = 7;
+      controls.autoRotate = false;
+      controls.autoRotateSpeed = 0.8;
+      controls.addEventListener("start", () => {
+        printZone.classList.add("hidden-while-orbiting");
+      });
+      controls.addEventListener("change", () => {
+        renderPrintTransform();
+      });
+      controls.addEventListener("end", () => {
+        syncOverlayToDecal(true);
+        printZone.classList.remove("hidden-while-orbiting");
+      });
+
+      const ambient = new THREE.HemisphereLight(0xffffff, 0xd7c7b9, 2.2);
+      scene.add(ambient);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+      keyLight.position.set(3, 4, 5);
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0x18b7b5, 0.7);
+      fillLight.position.set(-4, 2, 2);
+      scene.add(fillLight);
+
+      function resizeRenderer() {
+        const rect = modelViewport.getBoundingClientRect();
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height, false);
+      }
+
+      function fitModelToView(model) {
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxSize = Math.max(size.x, size.y, size.z);
+        const targetSize = 2.55;
+        const modelScale = targetSize / maxSize;
+
+        model.position.sub(center);
+        model.scale.setScalar(modelScale);
+
+        const fittedBox = new THREE.Box3().setFromObject(model);
+        const fittedCenter = fittedBox.getCenter(new THREE.Vector3());
+        controls.target.copy(fittedCenter);
+        camera.position.set(0, fittedCenter.y + 0.15, 4.1);
+        controls.update();
+        baseCameraDistance = camera.position.distanceTo(controls.target);
+      }
+
+      function setModelColor(color) {
+        shirtMaterials.forEach((material) => {
+          if (material.color) {
+            material.color.set(color);
+            material.needsUpdate = true;
+          }
+        });
+      }
+
+      function createDefaultDecalTexture() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 512;
+        canvas.height = 512;
+        const context = canvas.getContext("2d");
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#18b7b5";
+        context.beginPath();
+        context.arc(256, 256, 172, 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = "#c7a17a";
+        context.beginPath();
+        context.arc(256, 256, 124, 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = "#ffffff";
+        context.font = "800 58px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText("ELUCY", 256, 230);
+        context.font = "700 42px Arial";
+        context.fillText("print", 256, 292);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return texture;
+      }
+
+      function imageContentBounds(image) {
+        const scanCanvas = document.createElement("canvas");
+        const maxScanSize = 420;
+        const imageWidth = image.naturalWidth || image.width || 1024;
+        const imageHeight = image.naturalHeight || image.height || 1024;
+        const scaleDown = Math.min(1, maxScanSize / Math.max(imageWidth, imageHeight));
+        scanCanvas.width = Math.max(1, Math.round(imageWidth * scaleDown));
+        scanCanvas.height = Math.max(1, Math.round(imageHeight * scaleDown));
+        const scanContext = scanCanvas.getContext("2d", { willReadFrequently: true });
+
+        scanContext.drawImage(image, 0, 0, scanCanvas.width, scanCanvas.height);
+        const data = scanContext.getImageData(0, 0, scanCanvas.width, scanCanvas.height).data;
+        let hasTransparency = false;
+
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 245) {
+            hasTransparency = true;
+            break;
+          }
+        }
+
+        let minX = scanCanvas.width;
+        let minY = scanCanvas.height;
+        let maxX = 0;
+        let maxY = 0;
+
+        for (let y = 0; y < scanCanvas.height; y += 1) {
+          for (let x = 0; x < scanCanvas.width; x += 1) {
+            const index = (y * scanCanvas.width + x) * 4;
+            const r = data[index];
+            const g = data[index + 1];
+            const b = data[index + 2];
+            const a = data[index + 3];
+            const isContent = hasTransparency
+              ? a > 18
+              : !(r > 242 && g > 242 && b > 242);
+
+            if (isContent) {
+              minX = Math.min(minX, x);
+              minY = Math.min(minY, y);
+              maxX = Math.max(maxX, x);
+              maxY = Math.max(maxY, y);
+            }
+          }
+        }
+
+        if (minX > maxX || minY > maxY) {
+          return {
+            sourceX: 0,
+            sourceY: 0,
+            sourceWidth: imageWidth,
+            sourceHeight: imageHeight
+          };
+        }
+
+        const padding = 10;
+        minX = Math.max(0, minX - padding);
+        minY = Math.max(0, minY - padding);
+        maxX = Math.min(scanCanvas.width - 1, maxX + padding);
+        maxY = Math.min(scanCanvas.height - 1, maxY + padding);
+
+        return {
+          sourceX: Math.round(minX / scaleDown),
+          sourceY: Math.round(minY / scaleDown),
+          sourceWidth: Math.round((maxX - minX + 1) / scaleDown),
+          sourceHeight: Math.round((maxY - minY + 1) / scaleDown)
+        };
+      }
+
+      function frameShapeFromRatio(ratio) {
+        if (ratio > 1.65) {
+          return "wide";
+        }
+
+        if (ratio < 0.78) {
+          return "tall";
+        }
+
+        return "square";
+      }
+
+      function removeConnectedLightBackground(context, rect) {
+        const image = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+        const { data, width, height } = image;
+        const minX = Math.max(0, Math.floor(rect.x));
+        const minY = Math.max(0, Math.floor(rect.y));
+        const maxX = Math.min(width - 1, Math.ceil(rect.x + rect.width));
+        const maxY = Math.min(height - 1, Math.ceil(rect.y + rect.height));
+        const visited = new Uint8Array(width * height);
+        const queue = [];
+
+        function indexFor(x, y) {
+          return y * width + x;
+        }
+
+        function isLightBackground(x, y) {
+          const offset = indexFor(x, y) * 4;
+          const r = data[offset];
+          const g = data[offset + 1];
+          const b = data[offset + 2];
+          const a = data[offset + 3];
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+
+          return a > 12 && max > 218 && max - min < 42;
+        }
+
+        function addSeed(x, y) {
+          if (x < minX || x > maxX || y < minY || y > maxY) {
+            return;
+          }
+
+          const index = indexFor(x, y);
+          if (visited[index] || !isLightBackground(x, y)) {
+            return;
+          }
+
+          visited[index] = 1;
+          queue.push([x, y]);
+        }
+
+        for (let x = minX; x <= maxX; x += 1) {
+          addSeed(x, minY);
+          addSeed(x, maxY);
+        }
+
+        for (let y = minY; y <= maxY; y += 1) {
+          addSeed(minX, y);
+          addSeed(maxX, y);
+        }
+
+        while (queue.length) {
+          const [x, y] = queue.pop();
+          const offset = indexFor(x, y) * 4;
+          data[offset + 3] = 0;
+
+          addSeed(x + 1, y);
+          addSeed(x - 1, y);
+          addSeed(x, y + 1);
+          addSeed(x, y - 1);
+        }
+
+        context.putImageData(image, 0, 0);
+      }
+
+      function createDecalTextureFromImage(image, options = {}) {
+        const canvas = document.createElement("canvas");
+        const textureSize = options.textureSize || 1024;
+        canvas.width = textureSize;
+        canvas.height = textureSize;
+        const context = canvas.getContext("2d");
+        const bounds = imageContentBounds(image);
+        const padding = options.padding ?? 88;
+        const availableWidth = canvas.width - padding * 2;
+        const availableHeight = canvas.height - padding * 2;
+        const imageRatio = bounds.sourceWidth / bounds.sourceHeight;
+        const canvasRatio = availableWidth / availableHeight;
+        let drawWidth = availableWidth;
+        let drawHeight = availableHeight;
+
+        if (imageRatio > canvasRatio) {
+          drawHeight = drawWidth / imageRatio;
+        } else {
+          drawWidth = drawHeight * imageRatio;
+        }
+
+        const x = (canvas.width - drawWidth) / 2;
+        const y = (canvas.height - drawHeight) / 2;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(
+          image,
+          bounds.sourceX,
+          bounds.sourceY,
+          bounds.sourceWidth,
+          bounds.sourceHeight,
+          x,
+          y,
+          drawWidth,
+          drawHeight
+        );
+        if (options.removeBackground) {
+          removeConnectedLightBackground(context, {
+            x,
+            y,
+            width: drawWidth,
+            height: drawHeight
+          });
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = true;
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        return {
+          frameShape: frameShapeFromRatio(imageRatio),
+          frameRatio: imageRatio,
+          texture
+        };
+      }
+
+      function cssFontFamily(fontFamily) {
+        return fontFamily
+          .split(",")
+          .map((family) => {
+            const trimmed = family.trim();
+            if (!trimmed || trimmed.includes(" ") && trimmed.startsWith("\"")) {
+              return trimmed;
+            }
+
+            return trimmed.includes(" ") ? `"${trimmed}"` : trimmed;
+          })
+          .join(", ");
+      }
+
+      function createTextDecalTexture(text, fontFamily, color) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 2048;
+        canvas.height = 512;
+        const context = canvas.getContext("2d");
+        const safeText = text.trim() || "ELUCY";
+        let fontSize = 260;
+        const cleanFont = cssFontFamily(fontFamily);
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = color || "#0f7778";
+
+        do {
+          context.font = `700 ${fontSize}px ${cleanFont}`;
+          fontSize -= 8;
+        } while (context.measureText(safeText).width > 1780 && fontSize > 42);
+
+        const metrics = context.measureText(safeText);
+        const textWidth = Math.max(1, metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight);
+        const textHeight = Math.max(1, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+        const frameRatio = THREE.MathUtils.clamp((textWidth + 36) / (textHeight + 18), 1.4, 8);
+
+        context.fillText(safeText, canvas.width / 2, canvas.height / 2);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return {
+          frameRatio,
+          texture
+        };
+      }
+
+      function createPresetDecalTexture(type) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1024;
+        canvas.height = 1024;
+        const context = canvas.getContext("2d");
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+
+        if (type === "badge") {
+          context.fillStyle = "#c7a17a";
+          context.roundRect(212, 262, 600, 500, 72);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 126px Arial";
+          context.fillText("CUSTOM", 512, 450);
+          context.font = "900 150px Arial";
+          context.fillText("TEE", 512, 600);
+        } else if (type === "script") {
+          context.fillStyle = "#7c5f45";
+          context.font = "500 150px Segoe Script";
+          context.fillText("made", 512, 445);
+          context.fillStyle = "#18b7b5";
+          context.font = "800 142px Arial";
+          context.fillText("easy", 512, 600);
+        } else if (type === "star") {
+          context.strokeStyle = "#18b7b5";
+          context.lineWidth = 28;
+          context.beginPath();
+          for (let i = 0; i < 10; i += 1) {
+            const angle = -Math.PI / 2 + i * Math.PI / 5;
+            const radius = i % 2 === 0 ? 300 : 140;
+            const x = 512 + Math.cos(angle) * radius;
+            const y = 512 + Math.sin(angle) * radius;
+            if (i === 0) context.moveTo(x, y);
+            else context.lineTo(x, y);
+          }
+          context.closePath();
+          context.stroke();
+          context.fillStyle = "#0f7778";
+          context.font = "900 104px Arial";
+          context.fillText("STAR", 512, 494);
+          context.fillText("TEE", 512, 612);
+        } else if (type === "bold") {
+          context.fillStyle = "#1f2c2e";
+          context.fillRect(220, 300, 584, 390);
+          context.fillStyle = "#ffffff";
+          context.font = "900 132px Impact";
+          context.fillText("BOLD", 512, 462);
+          context.fillStyle = "#18b7b5";
+          context.fillText("LOOK", 512, 604);
+        } else if (type === "wave") {
+          context.strokeStyle = "#18b7b5";
+          context.lineWidth = 44;
+          context.beginPath();
+          context.moveTo(190, 500);
+          context.bezierCurveTo(320, 330, 460, 690, 610, 500);
+          context.bezierCurveTo(700, 380, 780, 440, 835, 510);
+          context.stroke();
+          context.fillStyle = "#7c5f45";
+          context.font = "900 100px Arial";
+          context.fillText("WAVE", 512, 610);
+        } else if (type === "minimal") {
+          context.fillStyle = "#18b7b5";
+          context.beginPath();
+          context.arc(512, 512, 115, 0, Math.PI * 2);
+          context.fill();
+          context.strokeStyle = "#c7a17a";
+          context.lineWidth = 22;
+          context.stroke();
+          context.fillStyle = "#ffffff";
+          context.font = "900 82px Arial";
+          context.fillText("MINI", 512, 500);
+          context.font = "800 54px Arial";
+          context.fillText("LOGO", 512, 575);
+        } else {
+          context.fillStyle = "#18b7b5";
+          context.beginPath();
+          context.arc(512, 512, 285, 0, Math.PI * 2);
+          context.fill();
+          context.fillStyle = "#c7a17a";
+          context.beginPath();
+          context.arc(512, 512, 205, 0, Math.PI * 2);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 122px Arial";
+          context.fillText("ELUCY", 512, 472);
+          context.font = "800 92px Arial";
+          context.fillText("print", 512, 595);
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return texture;
+      }
+
+      function loadImageFileAsDecal(file, imageUrl, options = {}) {
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          const image = new Image();
+
+          image.addEventListener("load", () => {
+            const imageDesign = createDecalTextureFromImage(image, {
+              removeBackground: Boolean(options.removeBackground)
+            });
+            addTextureAsDesign(imageDesign.texture, file.name || "Nalozena slika", {
+              imageUrl,
+              offsetX: 0,
+              offsetY: 0,
+              scale: imageDesign.frameShape === "wide" ? 0.82 : 1,
+              frameShape: imageDesign.frameShape,
+              frameRatio: imageDesign.frameRatio
+            });
+            modelStatus.textContent = options.removeBackground
+              ? "Nova grafika je dodana na majico. Belo ozadje je odstranjeno."
+              : "Nova slika je dodana na majico z ohranjenim ozadjem.";
+          });
+
+          image.src = reader.result;
+        });
+
+        reader.readAsDataURL(file);
+      }
+
+      function loadSvgFileAsDecal(file, imageUrl) {
+        const image = new Image();
+
+        image.addEventListener("load", () => {
+          const svgDesign = createDecalTextureFromImage(image, {
+            removeBackground: false,
+            textureSize: 3072,
+            padding: 120
+          });
+
+          addTextureAsDesign(svgDesign.texture, file.name || "SVG dizajn", {
+            imageUrl,
+            offsetX: 0,
+            offsetY: 0,
+            scale: svgDesign.frameShape === "wide" ? 0.82 : 1,
+            frameShape: svgDesign.frameShape,
+            frameRatio: svgDesign.frameRatio
+          });
+          modelStatus.textContent = "SVG dizajn je dodan na majico.";
+        });
+
+        image.addEventListener("error", () => {
+          modelStatus.textContent = "SVG datoteke ni bilo mogoce naloziti. Preveri, da je datoteka veljaven SVG.";
+        });
+
+        image.src = imageUrl;
+      }
+
+      function loadSvgUrlAsDecal(url, label) {
+        const image = new Image();
+
+        image.addEventListener("load", () => {
+          const svgDesign = createDecalTextureFromImage(image, {
+            removeBackground: false,
+            textureSize: 3072,
+            padding: 120
+          });
+
+          addTextureAsDesign(svgDesign.texture, label || "SVG dizajn", {
+            imageUrl: url,
+            offsetX: 0,
+            offsetY: 0,
+            scale: svgDesign.frameShape === "wide" ? 0.82 : 1,
+            frameShape: svgDesign.frameShape,
+            frameRatio: svgDesign.frameRatio
+          });
+          modelStatus.textContent = "SVG dizajn iz knjiznice je dodan na majico.";
+        });
+
+        image.addEventListener("error", () => {
+          modelStatus.textContent = "SVG dizajna iz knjiznice ni bilo mogoce naloziti.";
+        });
+
+        image.src = url;
+      }
+
+      function normalizeDecalTexture(texture) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.center.set(0.5, 0.5);
+        texture.generateMipmaps = true;
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        texture.needsUpdate = true;
+        return texture;
+      }
+
+      function captureActiveDesignState() {
+        if (!activeDesign) {
+          return;
+        }
+
+        activeDesign.offsetX = offsetX;
+        activeDesign.offsetY = offsetY;
+        activeDesign.scale = scale;
+        activeDesign.miniOffsetX = miniOffsetX;
+        activeDesign.miniOffsetY = miniOffsetY;
+        activeDesign.miniScale = miniScale;
+        activeDesign.rotation = artRotation;
+        activeDesign.flip = artFlip;
+      }
+
+      function renderDesignList() {
+        designList.replaceChildren();
+        designs.forEach((design, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `design-chip${design === activeDesign ? " active" : ""}`;
+          button.textContent = design.label || (design.isDefault ? "Osnovna" : `Grafika ${index + 1}`);
+          button.addEventListener("click", () => applyDesignToControls(design));
+          designList.appendChild(button);
+        });
+      }
+
+      function applyDesignToControls(design) {
+        activeDesign = design;
+        printZone.style.display = "";
+        printZone.style.setProperty("--frame-ratio", design.frameRatio || 1);
+        printZone.classList.toggle("wide-design", design.frameShape === "wide");
+        printZone.classList.toggle("text-design", design.frameShape === "text");
+        printZone.classList.toggle("tall-design", design.frameShape === "tall");
+        offsetX = design.offsetX;
+        offsetY = design.offsetY;
+        scale = design.scale;
+        miniOffsetX = design.miniOffsetX;
+        miniOffsetY = design.miniOffsetY;
+        miniScale = design.miniScale;
+        artRotation = design.rotation;
+        artFlip = design.flip;
+        uploadedImageUrl = design.imageUrl || "";
+        renderPrintTransform();
+        renderMiniPrintTransform();
+        renderArtTransform();
+        setMiniDesignContent();
+        renderDesignList();
+      }
+
+      function hideDesignControls() {
+        if (!activeDesign || dragging || resizing || rotating) {
+          return;
+        }
+
+        printZone.style.display = "none";
+      }
+
+      function createDesign(texture, options = {}) {
+        captureActiveDesignState();
+        const design = {
+          id: ++designIdCounter,
+          texture: normalizeDecalTexture(texture),
+          mesh: null,
+          anchorPoint: null,
+          imageUrl: options.imageUrl || "",
+          label: options.label || "",
+          frameShape: options.frameShape || "square",
+          frameRatio: options.frameRatio || 1,
+          targetObject: null,
+          isDefault: Boolean(options.isDefault),
+          offsetX: options.offsetX ?? 0,
+          offsetY: options.offsetY ?? 0,
+          scale: options.scale ?? 1,
+          miniOffsetX: 0,
+          miniOffsetY: 0,
+          miniScale: 1,
+          rotation: 0,
+          flip: 1
+        };
+
+        designs.push(design);
+        applyDesignToControls(design);
+        updateDecalFromOverlay();
+        renderDesignList();
+        return design;
+      }
+
+      function removeDesign(design, createFallback = true) {
+        if (!design) {
+          return;
+        }
+
+        if (design.mesh) {
+          scene.remove(design.mesh);
+          design.mesh.geometry.dispose();
+          design.mesh.material.dispose();
+        }
+
+        if (design.texture) {
+          design.texture.dispose();
+        }
+
+        if (design.imageUrl) {
+          URL.revokeObjectURL(design.imageUrl);
+        }
+
+        designs = designs.filter((item) => item !== design);
+        activeDesign = null;
+
+        if (designs.length) {
+          applyDesignToControls(designs[designs.length - 1]);
+        } else if (createFallback) {
+          createDesign(createDefaultDecalTexture(), { isDefault: true });
+        } else {
+          printZone.style.display = "none";
+          renderDesignList();
+        }
+      }
+
+      function removeDefaultDesigns() {
+        designs
+          .filter((design) => design.isDefault)
+          .forEach((design) => removeDesign(design, false));
+      }
+
+      function addTextureAsDesign(texture, label, options = {}) {
+        removeDefaultDesigns();
+        return createDesign(texture, {
+          label,
+          offsetX: options.offsetX ?? 0,
+          offsetY: options.offsetY ?? 0,
+          scale: options.scale ?? 1,
+          frameShape: options.frameShape || "square",
+          frameRatio: options.frameRatio || 1,
+          imageUrl: options.imageUrl || ""
+        });
+      }
+
+      function overlayCenterNdc() {
+        const canvasRect = renderer.domElement.getBoundingClientRect();
+        const overlayRect = printZone.getBoundingClientRect();
+        const centerX = overlayRect.left + overlayRect.width / 2;
+        const centerY = overlayRect.top + overlayRect.height / 2;
+
+        return new THREE.Vector2(
+          ((centerX - canvasRect.left) / canvasRect.width) * 2 - 1,
+          -(((centerY - canvasRect.top) / canvasRect.height) * 2 - 1)
+        );
+      }
+
+      function modelMeshes() {
+        const meshes = [];
+
+        if (!shirtModel) {
+          return meshes;
+        }
+
+        shirtModel.traverse((child) => {
+          if (child.isMesh) {
+            meshes.push(child);
+          }
+        });
+
+        return meshes;
+      }
+
+      function updateDecalFromOverlay() {
+        if (!shirtModel || !activeDesign || !activeDesign.texture) {
+          return;
+        }
+
+        captureActiveDesignState();
+        raycaster.setFromCamera(overlayCenterNdc(), camera);
+        const hit = raycaster.intersectObjects(modelMeshes(), false)[0];
+
+        if (!hit) {
+          return;
+        }
+
+        activeDesign.anchorPoint = hit.point.clone();
+        activeDesign.targetObject = hit.object;
+        rebuildActiveDecal(hit.object, activeDesign.anchorPoint);
+      }
+
+      function updateDecalDraftFromOverlay() {
+        const now = performance.now();
+
+        if (now - lastDraftDecalUpdate < 80) {
+          return;
+        }
+
+        lastDraftDecalUpdate = now;
+        updateDecalFromOverlay();
+      }
+
+      function rebuildActiveDecal(targetObject, point) {
+        if (!activeDesign || !activeDesign.texture || !targetObject || !point) {
+          return;
+        }
+
+        if (activeDesign.mesh) {
+          scene.remove(activeDesign.mesh);
+          activeDesign.mesh.geometry.dispose();
+          activeDesign.mesh.material.dispose();
+        }
+
+        const orientationQuaternion = camera.quaternion.clone();
+        const roll = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(artRotation));
+        orientationQuaternion.multiply(roll);
+
+        const orientation = new THREE.Euler().setFromQuaternion(orientationQuaternion);
+        const frameRatio = activeDesign.frameRatio || 1;
+        const decalSize = (activeDesign.frameShape === "text" ? 0.2 : 0.46) * scale;
+        const widthMultiplier = activeDesign.frameShape === "text" ? frameRatio : activeDesign.frameShape === "wide" ? 1.75 : activeDesign.frameShape === "tall" ? 0.8 : 1;
+        const heightMultiplier = activeDesign.frameShape === "text" ? 1 : activeDesign.frameShape === "wide" ? 0.58 : activeDesign.frameShape === "tall" ? 1.25 : 1;
+        const projectionDepth = activeDesign.frameShape === "text" ? 0.5 : 0.62;
+        const size = new THREE.Vector3(decalSize * widthMultiplier, decalSize * heightMultiplier, projectionDepth);
+
+        activeDesign.texture.repeat.set(artFlip, 1);
+        activeDesign.texture.needsUpdate = true;
+
+        const material = new THREE.MeshBasicMaterial({
+          map: activeDesign.texture,
+          transparent: true,
+          depthTest: true,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -4,
+          toneMapped: false
+        });
+
+        activeDesign.mesh = new THREE.Mesh(
+          new DecalGeometry(targetObject, point, orientation, size),
+          material
+        );
+        activeDesign.mesh.renderOrder = 8;
+        scene.add(activeDesign.mesh);
+      }
+
+      function rebuildActiveDecalAtAnchor() {
+        if (!activeDesign || !activeDesign.anchorPoint) {
+          return;
+        }
+
+        const meshes = modelMeshes();
+        const targetObject = activeDesign.targetObject || meshes[0];
+
+        if (!targetObject) {
+          return;
+        }
+
+        captureActiveDesignState();
+        rebuildActiveDecal(targetObject, activeDesign.anchorPoint);
+      }
+
+      function designFromPointer(event) {
+        if (!designs.length || resizing || rotating) {
+          return null;
+        }
+
+        const rect = renderer.domElement.getBoundingClientRect();
+        const pointer = new THREE.Vector2(
+          ((event.clientX - rect.left) / rect.width) * 2 - 1,
+          -(((event.clientY - rect.top) / rect.height) * 2 - 1)
+        );
+        const meshes = designs.map((design) => design.mesh).filter(Boolean);
+
+        if (!meshes.length) {
+          return null;
+        }
+
+        raycaster.setFromCamera(pointer, camera);
+        const hit = raycaster.intersectObjects(meshes, false)[0];
+
+        if (!hit) {
+          return null;
+        }
+
+        const design = designs.find((item) => item.mesh === hit.object);
+
+        if (!design) {
+          return null;
+        }
+
+        return design;
+      }
+
+      function selectDesignFromPointer(event) {
+        if (dragging) {
+          return false;
+        }
+
+        const design = designFromPointer(event);
+
+        if (!design) {
+          return false;
+        }
+
+        applyDesignToControls(design);
+        return true;
+      }
+
+      function syncOverlayToDecal(force = false) {
+        if (
+          !activeDesign ||
+          !activeDesign.anchorPoint ||
+          dragging ||
+          resizing ||
+          rotating ||
+          (!force && pointerOverPrint)
+        ) {
+          return;
+        }
+
+        const projected = activeDesign.anchorPoint.clone().project(camera);
+        const stageRect = document.querySelector("#stage").getBoundingClientRect();
+        const canvasRect = renderer.domElement.getBoundingClientRect();
+        const screenX = canvasRect.left + (projected.x + 1) * canvasRect.width / 2;
+        const screenY = canvasRect.top + (-projected.y + 1) * canvasRect.height / 2;
+        const localX = screenX - stageRect.left;
+        const localY = screenY - stageRect.top;
+        const baseX = stageRect.width * 0.5;
+        const baseY = stageRect.height * 0.43;
+        const margin = 80;
+
+        if (
+          localX < -margin ||
+          localY < -margin ||
+          localX > stageRect.width + margin ||
+          localY > stageRect.height + margin
+        ) {
+          return;
+        }
+
+        offsetX = localX - baseX;
+        offsetY = localY - baseY;
+        renderPrintTransform();
+      }
+
+      function loadModel() {
+        const loader = new GLTFLoader();
+
+        loader.load(
+          modelUrl,
+          (gltf) => {
+            shirtModel = gltf.scene;
+            shirtMaterials = [];
+
+            shirtModel.traverse((child) => {
+              if (!child.isMesh) {
+                return;
+              }
+
+              child.castShadow = true;
+              child.receiveShadow = true;
+
+              const materials = Array.isArray(child.material) ? child.material : [child.material];
+              materials.forEach((material) => {
+                if (material && !shirtMaterials.includes(material)) {
+                  shirtMaterials.push(material);
+                }
+              });
+            });
+
+            scene.add(shirtModel);
+            fitModelToView(shirtModel);
+            setModelColor(getComputedStyle(root).getPropertyValue("--shirt-color").trim() || "#ffffff");
+            createDesign(createDefaultDecalTexture(), { isDefault: true });
+            modelStatus.textContent = "3D model je nalozen. Grafika se projicira na majico in ostane na njej med vrtenjem.";
+          },
+          undefined,
+          (error) => {
+            console.error(error);
+            modelStatus.textContent =
+              "3D modela ni bilo mogoce naloziti. Preveri, da sta .gltf in .bin datoteki v assets/models/tshirt/ in da je stran odprta prek lokalnega streznika.";
+          }
+        );
+      }
+
+      function animate() {
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener("resize", resizeRenderer);
+      resizeRenderer();
+      loadModel();
+      animate();
+
+      function renderPrintTransform() {
+        captureActiveDesignState();
+        const currentCameraDistance = camera.position.distanceTo(controls.target);
+        const cameraScale = baseCameraDistance && currentCameraDistance
+          ? THREE.MathUtils.clamp(baseCameraDistance / currentCameraDistance, 0.55, 1.75)
+          : 1;
+        const visualScale = scale * cameraScale;
+        const counterScale = THREE.MathUtils.clamp(1 / visualScale, 0.35, 2.8);
+        root.style.setProperty("--control-counter-scale", counterScale);
+        printZone.style.transform =
+          `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${-artRotation}deg) scale(${visualScale})`;
+      }
+
+      function currentMiniPrint() {
+        return document.querySelector(`[data-mini-print="${selectedSide}"]`);
+      }
+
+      function renderMiniPrintTransform() {
+        captureActiveDesignState();
+        const miniPrint = currentMiniPrint();
+
+        if (!miniPrint) {
+          return;
+        }
+
+        miniPrint.style.transform =
+          `translate(calc(-50% + ${miniOffsetX}px), calc(-50% + ${miniOffsetY}px)) rotate(${-artRotation}deg) scale(${miniScale})`;
+      }
+
+      function setScale(nextScale, rebuild = true) {
+        scale = Math.min(4, Math.max(0.25, nextScale));
+        root.style.setProperty("--print-scale", scale);
+        renderPrintTransform();
+        if (rebuild) {
+          rebuildActiveDecalAtAnchor();
+        }
+      }
+
+      function setMiniScale(nextScale) {
+        miniScale = Math.min(1.9, Math.max(0.55, nextScale));
+        root.style.setProperty("--mini-print-scale", miniScale);
+        renderMiniPrintTransform();
+      }
+
+      function defaultPrintContent(target) {
+        target.textContent = "";
+        target.append("ELUCY", document.createElement("br"), "print");
+      }
+
+      function setMiniDesignContent() {
+        document.querySelectorAll("[data-mini-art]").forEach((target) => {
+          if (uploadedImageUrl) {
+            const image = document.createElement("img");
+            image.alt = "Nalozena slika za tisk";
+            image.src = uploadedImageUrl;
+            target.replaceChildren(image);
+          } else {
+            defaultPrintContent(target);
+          }
+        });
+      }
+
+      function setActiveSide(side) {
+        selectedSide = side;
+        document.querySelectorAll(".mini-shirt").forEach((shirt) => {
+          const isActive = shirt.dataset.sidePreview === selectedSide;
+          shirt.classList.toggle("active", isActive);
+          shirt.classList.toggle("has-design", isActive);
+        });
+        miniOffsetX = 0;
+        miniOffsetY = 0;
+        renderMiniPrintTransform();
+        renderArtMode();
+      }
+
+      function renderArtTransform(rebuild = true) {
+        captureActiveDesignState();
+        root.style.setProperty("--art-rotation", `${artRotation}deg`);
+        root.style.setProperty("--art-flip", artFlip);
+        flipImage.classList.toggle("active", artFlip === -1);
+        renderPrintTransform();
+        renderMiniPrintTransform();
+        if (rebuild) {
+          rebuildActiveDecalAtAnchor();
+        }
+      }
+
+      function renderArtMode() {
+        const rotateMode = artMode === "rotate";
+        printZone.classList.toggle("rotate-mode", rotateMode);
+        modeHint.textContent = rotateMode ? "Rotacija" : "Velikost";
+        document.querySelectorAll(".mini-print").forEach((miniPrint) => {
+          miniPrint.classList.toggle("rotate-mode", rotateMode);
+        });
+      }
+
+      function toggleArtMode() {
+        artMode = artMode === "resize" ? "rotate" : "resize";
+        renderArtMode();
+      }
+
+      function angleFromCenter(element, event) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        return Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180 / Math.PI;
+      }
+
+      function beginDesignDrag(event, handle, fromCanvas = false) {
+        if (!activeDesign) {
+          return;
+        }
+
+        dragging = true;
+        draggingFromCanvas = fromCanvas;
+        dragMoved = false;
+        startX = event.clientX - offsetX;
+        startY = event.clientY - offsetY;
+        controls.enabled = false;
+
+        if (handle && handle.setPointerCapture) {
+          handle.setPointerCapture(event.pointerId);
+        }
+
+        event.preventDefault();
+      }
+
+      function moveDesignDrag(event) {
+        if (!dragging || resizing || rotating) {
+          return;
+        }
+
+        offsetX = event.clientX - startX;
+        offsetY = event.clientY - startY;
+        dragMoved = Math.abs(offsetX) > 3 || Math.abs(offsetY) > 3;
+        renderPrintTransform();
+        updateDecalDraftFromOverlay();
+      }
+
+      function endDesignDrag() {
+        if (!dragging) {
+          return;
+        }
+
+        dragging = false;
+        draggingFromCanvas = false;
+        controls.enabled = true;
+        lastDraftDecalUpdate = 0;
+        updateDecalFromOverlay();
+      }
+
+      printZone.addEventListener("pointerdown", (event) => {
+        if (
+          event.target.closest(".resize-handle") ||
+          event.target.closest(".rotate-handle") ||
+          event.target.closest(".delete-design")
+        ) {
+          return;
+        }
+
+        beginDesignDrag(event, printZone);
+      });
+
+      printZone.addEventListener("pointermove", (event) => {
+        moveDesignDrag(event);
+      });
+
+      printZone.addEventListener("pointerup", () => {
+        endDesignDrag();
+      });
+
+      printZone.addEventListener("pointerenter", () => {
+        pointerOverPrint = true;
+      });
+
+      printZone.addEventListener("pointerleave", () => {
+        pointerOverPrint = false;
+      });
+
+      printResizeHandle.addEventListener("pointerdown", (event) => {
+        resizing = true;
+        resizeStartX = event.clientX;
+        resizeStartScale = scale;
+        printResizeHandle.setPointerCapture(event.pointerId);
+        event.stopPropagation();
+      });
+
+      printResizeHandle.addEventListener("pointermove", (event) => {
+        if (!resizing) {
+          return;
+        }
+
+        const delta = event.clientX - resizeStartX;
+        setScale(resizeStartScale + delta / 180, false);
+        updateDecalDraftFromOverlay();
+      });
+
+      printResizeHandle.addEventListener("pointerup", () => {
+        resizing = false;
+        lastDraftDecalUpdate = 0;
+        updateDecalFromOverlay();
+      });
+
+      printRotateHandle.addEventListener("pointerdown", (event) => {
+        rotating = true;
+        rotateStartAngle = angleFromCenter(printZone, event);
+        rotateStartRotation = artRotation;
+        printRotateHandle.setPointerCapture(event.pointerId);
+        event.stopPropagation();
+      });
+
+      printRotateHandle.addEventListener("pointermove", (event) => {
+        if (!rotating) {
+          return;
+        }
+
+        artRotation = rotateStartRotation - (angleFromCenter(printZone, event) - rotateStartAngle);
+        renderArtTransform(false);
+        updateDecalDraftFromOverlay();
+      });
+
+      printRotateHandle.addEventListener("pointerup", () => {
+        rotating = false;
+        lastDraftDecalUpdate = 0;
+        updateDecalFromOverlay();
+      });
+
+      printZone.addEventListener("click", (event) => {
+        if (
+          event.target.closest(".resize-handle") ||
+          event.target.closest(".rotate-handle") ||
+          event.target.closest(".delete-design")
+        ) {
+          return;
+        }
+
+        if (dragMoved) {
+          dragMoved = false;
+          event.stopPropagation();
+          return;
+        }
+
+        toggleArtMode();
+        event.stopPropagation();
+      });
+
+      renderer.domElement.addEventListener("pointerdown", (event) => {
+        const design = designFromPointer(event);
+
+        if (!design) {
+          hideDesignControls();
+          return;
+        }
+
+        applyDesignToControls(design);
+        syncOverlayToDecal(true);
+        beginDesignDrag(event, renderer.domElement, true);
+        event.stopImmediatePropagation();
+      }, true);
+
+      renderer.domElement.addEventListener("pointermove", (event) => {
+        if (!draggingFromCanvas) {
+          return;
+        }
+
+        moveDesignDrag(event);
+        event.stopPropagation();
+      });
+
+      renderer.domElement.addEventListener("pointerup", (event) => {
+        if (!draggingFromCanvas) {
+          return;
+        }
+
+        endDesignDrag();
+        event.stopPropagation();
+      });
+
+      renderer.domElement.addEventListener("pointercancel", () => {
+        if (draggingFromCanvas) {
+          endDesignDrag();
+        }
+      });
+
+      renderer.domElement.addEventListener("click", (event) => {
+        if (selectDesignFromPointer(event)) {
+          event.stopPropagation();
+        }
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (
+          event.target.closest("#printZone") ||
+          event.target.closest("[data-preset]") ||
+          event.target.closest(".design-chip")
+        ) {
+          return;
+        }
+
+        hideDesignControls();
+      });
+
+      document.querySelector("#zoomIn").addEventListener("click", () => setScale(scale + 0.1));
+      document.querySelector("#zoomOut").addEventListener("click", () => setScale(scale - 0.1));
+      document.querySelector("#resetDesign").addEventListener("click", () => {
+        offsetX = 0;
+        offsetY = 0;
+        miniOffsetX = 0;
+        miniOffsetY = 0;
+        setScale(1);
+        setMiniScale(1);
+        renderMiniPrintTransform();
+        updateDecalFromOverlay();
+      });
+
+      flipImage.addEventListener("click", () => {
+        artFlip *= -1;
+        renderArtTransform();
+      });
+
+      resetTransform.addEventListener("click", () => {
+        artRotation = 0;
+        artFlip = 1;
+        renderArtTransform();
+      });
+
+      document.querySelectorAll(".swatch").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".swatch").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          root.style.setProperty("--shirt-color", button.dataset.color);
+          setModelColor(button.dataset.color);
+        });
+      });
+
+      document.querySelectorAll(".mini-print").forEach((miniPrint) => {
+        miniPrint.addEventListener("pointerdown", (event) => {
+          if (event.target.closest(".resize-handle") || event.target.closest(".rotate-handle")) {
+            return;
+          }
+
+          if (miniPrint.dataset.miniPrint !== selectedSide) {
+            return;
+          }
+
+          miniDragging = true;
+          miniDragMoved = false;
+          miniStartX = event.clientX - miniOffsetX;
+          miniStartY = event.clientY - miniOffsetY;
+          miniPrint.setPointerCapture(event.pointerId);
+        });
+
+        miniPrint.addEventListener("pointermove", (event) => {
+          if (!miniDragging || miniResizing || miniRotating || miniPrint.dataset.miniPrint !== selectedSide) {
+            return;
+          }
+
+          miniOffsetX = event.clientX - miniStartX;
+          miniOffsetY = event.clientY - miniStartY;
+          miniDragMoved = Math.abs(miniOffsetX) > 3 || Math.abs(miniOffsetY) > 3;
+          renderMiniPrintTransform();
+        });
+
+        miniPrint.addEventListener("pointerup", () => {
+          miniDragging = false;
+        });
+
+        miniPrint.addEventListener("click", (event) => {
+          if (miniPrint.dataset.miniPrint !== selectedSide) {
+            return;
+          }
+
+          if (miniDragMoved) {
+            miniDragMoved = false;
+            event.stopPropagation();
+            return;
+          }
+
+          toggleArtMode();
+          event.stopPropagation();
+        });
+      });
+
+      document.querySelectorAll("[data-mini-resize]").forEach((handle) => {
+        handle.addEventListener("pointerdown", (event) => {
+          if (handle.dataset.miniResize !== selectedSide) {
+            return;
+          }
+
+          miniResizing = true;
+          miniResizeStartX = event.clientX;
+          miniResizeStartScale = miniScale;
+          handle.setPointerCapture(event.pointerId);
+          event.stopPropagation();
+        });
+
+        handle.addEventListener("pointermove", (event) => {
+          if (!miniResizing || handle.dataset.miniResize !== selectedSide) {
+            return;
+          }
+
+          const delta = event.clientX - miniResizeStartX;
+          setMiniScale(miniResizeStartScale + delta / 130);
+        });
+
+        handle.addEventListener("pointerup", () => {
+          miniResizing = false;
+        });
+      });
+
+      document.querySelectorAll("[data-mini-rotate]").forEach((handle) => {
+        handle.addEventListener("pointerdown", (event) => {
+          const miniPrint = currentMiniPrint();
+
+          if (handle.dataset.miniRotate !== selectedSide || !miniPrint) {
+            return;
+          }
+
+          miniRotating = true;
+          miniRotateStartAngle = angleFromCenter(miniPrint, event);
+          miniRotateStartRotation = artRotation;
+          handle.setPointerCapture(event.pointerId);
+          event.stopPropagation();
+        });
+
+        handle.addEventListener("pointermove", (event) => {
+          const miniPrint = currentMiniPrint();
+
+          if (!miniRotating || handle.dataset.miniRotate !== selectedSide || !miniPrint) {
+            return;
+          }
+
+          artRotation = miniRotateStartRotation - (angleFromCenter(miniPrint, event) - miniRotateStartAngle);
+          renderArtTransform();
+        });
+
+        handle.addEventListener("pointerup", () => {
+          miniRotating = false;
+        });
+      });
+
+      upload.addEventListener("change", () => {
+        const file = upload.files && upload.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        if (/jpe?g$/i.test(file.name) || file.type === "image/jpeg") {
+          removeWhiteBackground.checked = false;
+        }
+
+        uploadedImageUrl = URL.createObjectURL(file);
+        const image = document.createElement("img");
+        image.alt = "Nalozena slika za tisk";
+        image.src = uploadedImageUrl;
+        printArt.replaceChildren(image);
+        setMiniDesignContent();
+        loadImageFileAsDecal(file, uploadedImageUrl, {
+          removeBackground: removeWhiteBackground.checked
+        });
+      });
+
+      svgUpload.addEventListener("change", () => {
+        const file = svgUpload.files && svgUpload.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        if (!/\.svg$/i.test(file.name) && file.type !== "image/svg+xml") {
+          modelStatus.textContent = "Prosim izberi SVG datoteko.";
+          return;
+        }
+
+        uploadedImageUrl = URL.createObjectURL(file);
+        const image = document.createElement("img");
+        image.alt = "SVG dizajn za tisk";
+        image.src = uploadedImageUrl;
+        printArt.replaceChildren(image);
+        setMiniDesignContent();
+        loadSvgFileAsDecal(file, uploadedImageUrl);
+      });
+
+      removeImage.addEventListener("click", () => {
+        removeDesign(activeDesign, false);
+        upload.value = "";
+        svgUpload.value = "";
+      });
+
+      document.querySelectorAll("[data-preset]").forEach((button) => {
+        button.addEventListener("click", () => {
+          addTextureAsDesign(
+            createPresetDecalTexture(button.dataset.preset),
+            button.querySelector(".preset-mark")?.textContent.replace(/\s+/g, " ").trim() || "Prednalozen dizajn"
+          );
+          modelStatus.textContent = "Prednalozen dizajn je dodan na majico.";
+        });
+      });
+
+      document.querySelectorAll("[data-svg-preset]").forEach((button) => {
+        const thumbnail = button.querySelector(".preset-svg");
+
+        if (thumbnail) {
+          if (thumbnail.complete && thumbnail.naturalWidth > 0) {
+            button.classList.remove("svg-fallback");
+          }
+
+          thumbnail.addEventListener("load", () => {
+            button.classList.remove("svg-fallback");
+          });
+        }
+
+        button.addEventListener("click", () => {
+          loadSvgUrlAsDecal(button.dataset.svgPreset, button.dataset.svgLabel || "SVG dizajn");
+        });
+      });
+
+      document.querySelectorAll("[data-text-color]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-text-color]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          textColor.value = button.dataset.textColor;
+        });
+      });
+
+      textColor.addEventListener("input", () => {
+        document.querySelectorAll("[data-text-color]").forEach((item) => {
+          item.classList.toggle("active", item.dataset.textColor.toLowerCase() === textColor.value.toLowerCase());
+        });
+      });
+
+      addTextDesign.addEventListener("click", () => {
+        const value = textInput.value.trim();
+
+        if (!value) {
+          textInput.focus();
+          return;
+        }
+
+        const textDesign = createTextDecalTexture(value, fontSelect.value, textColor.value);
+        addTextureAsDesign(
+          textDesign.texture,
+          `Tekst: ${value.slice(0, 14)}`,
+          {
+            frameShape: "text",
+            frameRatio: textDesign.frameRatio,
+            scale: 1
+          }
+        );
+        modelStatus.textContent = "Tekst je dodan kot nova grafika na majico.";
+      });
+
+      textInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          addTextDesign.click();
+        }
+      });
+
+      deleteActiveDesign.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        removeDesign(activeDesign, false);
+      });
+
+      deleteActiveDesign.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      setActiveSide("front");
+      setMiniDesignContent();
+      renderArtTransform();
+      renderArtMode();
+    </script>
+  </body>
+</html>
