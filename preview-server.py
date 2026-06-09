@@ -9,7 +9,7 @@ MODEL_ROOT = Path(r"C:\Users\ELUCY\Downloads\t-shirt\source\T_shirt_gltf")
 GRAPHICS_ROOT = Path(r"D:\Grafike")
 DESIGN_ROOT = SITE_ROOT / "assets" / "designs"
 DESIGN_ASSETS = {
-    "be-the.svg": GRAPHICS_ROOT / "Be the .svg",
+    "be_the.svg": GRAPHICS_ROOT / "Be the .svg",
     "chross.svg": GRAPHICS_ROOT / "Chross.svg",
     "heart.svg": GRAPHICS_ROOT / "Heart.svg",
 }
