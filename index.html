@@ -218,6 +218,7 @@
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 12px;
         margin-top: 34px;
       }
@@ -236,13 +237,16 @@
 
       .textile-carousel {
         position: relative;
-        min-height: 265px;
+        width: 100vw;
+        height: min(50vw, 720px);
+        min-height: 360px;
         margin-top: 58px;
+        margin-left: calc(50% - 50vw);
         overflow: hidden;
-        border-radius: 8px;
-        border: 1px solid var(--line);
+        border-radius: 0;
+        border: 0;
         background: var(--white);
-        box-shadow: var(--shadow);
+        box-shadow: none;
       }
 
       .textile-carousel::before {
@@ -251,37 +255,61 @@
         inset: 0;
         z-index: 2;
         background:
-          linear-gradient(90deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.18) 46%, rgba(255, 255, 255, 0.6)),
-          rgba(255, 255, 255, 0.24);
+          linear-gradient(90deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.18) 46%, rgba(255, 255, 255, 0.46)),
+          rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+      }
+
+      .textile-carousel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        background:
+          linear-gradient(90deg, var(--white) 0%, var(--white) 5%, rgba(255, 255, 255, 0.72) 12%, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 80%, rgba(255, 255, 255, 0.72) 88%, var(--white) 95%, var(--white) 100%);
         pointer-events: none;
       }
 
       .textile-carousel img {
         position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        top: 50%;
+        left: 50%;
+        width: auto;
+        max-width: none;
+        height: 108%;
+        object-fit: contain;
+        object-position: center;
         opacity: 0;
-        filter: brightness(1.1) saturate(0.78) contrast(0.92);
-        animation: textileFade 18s infinite;
+        filter: brightness(1.08) saturate(0.92) contrast(0.96);
+        transform: translate(-50%, -50%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 5%, #000 20%, #000 80%, transparent 95%, transparent 100%);
+        mask-image: linear-gradient(90deg, transparent 0%, transparent 5%, #000 20%, #000 80%, transparent 95%, transparent 100%);
+        animation: textileFade 24s infinite ease-in-out;
+      }
+
+      .textile-carousel img:nth-child(1) {
+        animation-delay: -2.4s;
       }
 
       .textile-carousel img:nth-child(2) {
-        animation-delay: 6s;
+        animation-delay: 5.6s;
       }
 
       .textile-carousel img:nth-child(3) {
-        animation-delay: 12s;
+        animation-delay: 13.6s;
       }
 
       @keyframes textileFade {
-        0%,
-        27% {
+        0% {
+          opacity: 0;
+        }
+
+        10%,
+        33% {
           opacity: 1;
         }
 
-        34%,
+        45%,
         100% {
           opacity: 0;
         }
@@ -311,6 +339,17 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.78);
+      }
+
+      .card-link {
+        display: block;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .card-link:hover {
+        transform: translateY(-3px);
+        border-color: rgba(24, 183, 181, 0.34);
+        box-shadow: 0 16px 34px rgba(31, 44, 46, 0.1);
       }
 
       .card-number {
@@ -405,7 +444,8 @@
         }
 
         .textile-carousel {
-          min-height: 220px;
+          height: min(58vw, 520px);
+          min-height: 300px;
         }
 
         .contact-layout,
@@ -434,7 +474,8 @@
         }
 
         .textile-carousel {
-          min-height: 190px;
+          height: 68vw;
+          min-height: 240px;
           margin-top: 36px;
         }
 
@@ -481,23 +522,22 @@
               </p>
               <div class="hero-actions">
                 <a class="button button-primary" href="konfigurator.html">Oblikuj majico</a>
-                <a class="button button-secondary" href="#kontakt">Kontakt</a>
               </div>
             </div>
           </div>
 
           <div class="textile-carousel" aria-label="Menjajoci trak tekstilnih izdelkov">
             <img
-              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19fa1db90c8191b73c7624432ce971.png"
-              alt="Tekstilni izdelki za tisk v beli, turkizni in kapucino barvi"
+              src="assets/images/textile-carousel-contrast-1.png"
+              alt="Potiskane majice in torba v beli, turkizni in kapucino barvi"
             >
             <img
-              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19feec08808191a0349e0a4b5ae551.png"
-              alt="Zlozene majice in tekstil za personalizacijo"
+              src="assets/images/textile-carousel-contrast-2.png"
+              alt="Majice z različnimi modernimi potiski za personalizacijo"
             >
             <img
-              src="file:///C:/Users/ELUCY/.codex/generated_images/019e7565-db99-75c2-be38-bb24c43b1337/ig_04dc9d05c0ff397c016a19ff14391c8191813b145dd1efa07d.png"
-              alt="Majice, torba in tekstilni vzorci za tisk"
+              src="assets/images/textile-carousel-contrast-3.png"
+              alt="Majica in torba s cvetličnim in rojstnodnevnim potiskom"
             >
           </div>
         </div>
@@ -507,21 +547,21 @@
         <div class="section-inner">
           <h2 class="section-title" id="services-title">Izdelki in storitve</h2>
           <div class="cards">
-            <article class="card">
+            <a class="card card-link" href="valeta-matura.html">
               <span class="card-number">01</span>
-              <h3>Tisk na majice</h3>
-              <p>Personalizirane majice za posameznike, ekipe, dogodke in podjetja.</p>
-            </article>
-            <article class="card">
+              <h3>Majice za valeto ali maturantski izlet</h3>
+              <p>Usklajene majice za razred, ekipo ali skupino prijateljev z imeni, internimi forami, letnico in motivom, ki ostane lep spomin na dogodek.</p>
+            </a>
+            <a class="card card-link" href="predloge.html">
               <span class="card-number">02</span>
-              <h3>Promo izdelki</h3>
-              <p>Tisk na izdelke, ki pomagajo znamki ostati vidna in prepoznavna.</p>
-            </article>
-            <article class="card">
+              <h3>Tematske predloge za ciljne skupine</h3>
+              <p>Pregled pripravljenih idej po temah, od šole, družine in rojstnih dni do hobijev, navijačev, ekip in podjetij. Predloge bodo služile kot hitra izhodišča za naročila.</p>
+            </a>
+            <a class="card card-link" href="promocijski-material.html">
               <span class="card-number">03</span>
-              <h3>Priprava za tisk</h3>
-              <p>Pregled datotek, postavitev dizajna in osnovna graficna priprava.</p>
-            </article>
+              <h3>Promocijski material</h3>
+              <p>Letaki, nalepke, plakati, darilne vrečke in darilni material za dogodke, predstavitve, trgovine in osebna darila, pripravljeni v usklajenem vizualnem slogu.</p>
+            </a>
           </div>
         </div>
       </section>
@@ -542,8 +582,8 @@
             </article>
             <article class="card">
               <span class="card-number">Korak 3</span>
-              <h3>Oddaja narocila</h3>
-              <p>Ko je dizajn pripravljen, gre povprasevanje ali narocilo naprej v tisk.</p>
+              <h3>Oddaja naročila</h3>
+              <p>Ko je dizajn pripravljen, gre povpraševanje ali naročilo naprej v tisk.</p>
             </article>
           </div>
         </div>
@@ -556,16 +596,16 @@
             <article class="card">
               <span class="card-number">Namen</span>
               <h3>Personalizacija brez zapletov</h3>
-              <p>Strankam zelimo omogociti enostavno pot od ideje do izdelka za tisk.</p>
+              <p>Strankam želimo omogočiti enostavno pot od ideje do izdelka za tisk.</p>
             </article>
             <article class="card">
               <span class="card-number">Fokus</span>
               <h3>Majice in tiskani izdelki</h3>
-              <p>Stran bo usmerjena v majice, promo izdelke in pregledno oddajo povprasevanja.</p>
+              <p>Stran bo usmerjena v majice, promo izdelke in pregledno oddajo povpraševanja.</p>
             </article>
             <article class="card">
               <span class="card-number">Naprej</span>
-              <h3>Vticnik za dizajn</h3>
+              <h3>Vtičnik za dizajn</h3>
               <p>Kasneje lahko dodava pravi konfigurator z barvami, napisi, slikami in predogledom.</p>
             </article>
           </div>
@@ -575,10 +615,10 @@
       <section class="contact-band" id="kontakt" aria-labelledby="contact-title">
         <div class="section-inner contact-layout">
           <div>
-            <h2 id="contact-title">Pripravimo tisk, ki izgleda cisto in profesionalno.</h2>
+            <h2 id="contact-title">Pripravimo tisk, ki izgleda čisto in profesionalno.</h2>
             <p>
-              To je zacetna verzija strani. Naslednji korak je, da dodava prave izdelke,
-              ozadja, galerijo in kasneje se vticnik za oblikovanje majic.
+              To je začetna verzija strani. Naslednji korak je, da dodava prave izdelke,
+              ozadja, galerijo in kasneje še vtičnik za oblikovanje majic.
             </p>
           </div>
           <a class="button" href="mailto:info@elucydesign.si">info@elucydesign.si</a>

@@ -147,6 +147,10 @@ Tekst ima:
 - Preveriti delovanje na mobilnem telefonu.
 - Dodati opozorila za prevelik tisk ali slabo resolucijo slike.
 - Urediti bolj profesionalno zbirko prednalozenih dizajnov.
+- Angleško in nemško verzijo strani narediti proti koncu, ko bo slovenska vsebina bolj stabilna, da se besedila ne urejajo trikrat pri vsaki spremembi.
+- Po aktivaciji strani poenostaviti in izboljsati odstranjevanje ozadja pri nalozenih grafikah:
+  zaznava ozadja iz robov slike, brisanje samo povezanega zunanjega ozadja, nastavljiva obcutljivost
+  in po potrebi kasneje "magic click" izbira ozadja, da se ne odstrani belih delov znotraj logotipa.
 - Kasneje razmisliti o backendu za AI/CDR/EPS/PDF pretvorbe.
 
 ## Ce kaj ne deluje na GitHub Pages

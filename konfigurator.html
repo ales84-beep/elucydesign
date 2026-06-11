@@ -172,6 +172,7 @@
       .configurator {
         display: grid;
         grid-template-columns: minmax(230px, 0.42fr) minmax(0, 1.45fr) minmax(350px, 0.72fr);
+        grid-template-rows: auto auto;
         gap: 24px;
         align-items: start;
       }
@@ -186,8 +187,18 @@
 
       .stage-card {
         grid-column: 2;
+        grid-row: 1;
         min-height: 710px;
         padding: 18px;
+      }
+
+      .category-panel {
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 710px;
+        max-height: min(720px, calc(100vh - 120px));
+        overflow-y: auto;
+        scrollbar-width: thin;
       }
 
       .stage {
@@ -205,21 +216,41 @@
         background-size: 36px 36px, 36px 36px, auto;
       }
 
-      .stage-badge {
+      .view-button {
         position: absolute;
         top: 20px;
-        left: 20px;
         z-index: 4;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
+        width: 112px;
         min-height: 38px;
         padding: 0 12px;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.78);
         color: var(--turquoise-dark);
+        font: inherit;
         font-weight: 900;
+        cursor: pointer;
+      }
+
+      .view-button:hover {
+        background: var(--turquoise-soft);
+      }
+
+      .view-button.active {
+        border-color: rgba(24, 183, 181, 0.38);
+        background: var(--turquoise-soft);
+      }
+
+      .view-button.front-view {
+        left: 20px;
+      }
+
+      .view-button.back-view {
+        right: 20px;
       }
 
       .stage-tools {
@@ -227,31 +258,108 @@
         left: 20px;
         bottom: 20px;
         z-index: 4;
+      }
+
+      .stage-image-tools,
+      .stage-design-tools {
+        position: absolute;
+        left: 50%;
+        z-index: 6;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 9px;
+        justify-content: center;
+        gap: clamp(10px, 1.7vw, 18px);
+        transform: translateX(-50%);
+      }
+
+      .stage-image-tools {
+        top: 20px;
+      }
+
+      .stage-design-tools {
+        bottom: 74px;
+      }
+
+      .stage-tool-button {
+        width: clamp(88px, 13vw, 112px);
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 8px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.86);
+        color: var(--turquoise-dark);
+        background: rgba(255, 255, 255, 0.9);
         box-shadow: 0 10px 24px rgba(31, 44, 46, 0.1);
+        font: inherit;
+        font-size: 0.86rem;
+        font-weight: 900;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .stage-toggle {
+        width: clamp(108px, 15vw, 128px);
+      }
+
+      .stage-tool-button:hover,
+      .stage-tool-button.active,
+      .stage-toggle.checked {
+        border-color: rgba(24, 183, 181, 0.44);
+        background: var(--turquoise-soft);
+      }
+
+      .stage-toggle.checked {
+        color: var(--white);
+        border-color: var(--turquoise-dark);
+        background: var(--turquoise-dark);
+      }
+
+      .stage-toggle input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
       }
 
       .tool-button {
-        width: 38px;
+        width: 112px;
         height: 38px;
         display: grid;
         place-items: center;
-        border: 0;
+        border: 1px solid var(--line);
         border-radius: 8px;
-        color: var(--ink);
-        background: transparent;
-        font-size: 1.16rem;
+        color: var(--turquoise-dark);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 10px 24px rgba(31, 44, 46, 0.1);
+        font: inherit;
         font-weight: 900;
         cursor: pointer;
       }
 
       .tool-button:hover {
+        background: var(--turquoise-soft);
+      }
+
+      .undo-button {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        z-index: 4;
+        width: 112px;
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--turquoise-dark);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 10px 24px rgba(31, 44, 46, 0.1);
+        font: inherit;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .undo-button:hover {
         background: var(--turquoise-soft);
       }
 
@@ -286,7 +394,7 @@
         aspect-ratio: 1;
         display: grid;
         place-items: center;
-        transform: translate(-50%, -50%) rotate(calc(var(--art-rotation) * -1)) scale(var(--print-scale));
+        transform: translate(-50%, -50%) rotate(calc(var(--art-rotation) * -1));
         transform-origin: center;
         border: 2px dashed rgba(24, 183, 181, 0.65);
         border-radius: 8px;
@@ -295,6 +403,14 @@
         user-select: none;
         touch-action: none;
         --frame-ratio: 1;
+        --frame-width: min(170px, 22%);
+        --frame-height: min(170px, 22%);
+      }
+
+      .print-zone.dynamic-frame {
+        width: var(--frame-width);
+        height: var(--frame-height);
+        aspect-ratio: auto;
       }
 
       .print-zone.wide-design {
@@ -312,6 +428,12 @@
         aspect-ratio: 0.72;
       }
 
+      .print-zone.dynamic-frame {
+        width: var(--frame-width);
+        height: var(--frame-height);
+        aspect-ratio: auto;
+      }
+
       .print-zone.hidden-while-orbiting {
         opacity: 0;
         pointer-events: none;
@@ -319,11 +441,11 @@
 
       .resize-handle {
         position: absolute;
-        right: -8px;
-        bottom: -8px;
+        right: -10px;
+        bottom: -10px;
         z-index: 4;
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         border: 2px solid var(--turquoise);
         border-radius: 999px;
         background: var(--white);
@@ -334,11 +456,11 @@
 
       .delete-design {
         position: absolute;
-        right: -10px;
-        top: -10px;
+        right: -14px;
+        top: -14px;
         z-index: 5;
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         display: grid;
         place-items: center;
         border: 1px solid rgba(31, 44, 46, 0.16);
@@ -346,8 +468,16 @@
         color: var(--white);
         background: rgba(31, 44, 46, 0.78);
         cursor: pointer;
-        font-size: 0.86rem;
+        font-size: 0;
         font-weight: 900;
+      }
+
+      .delete-design::before {
+        content: "";
+        width: 15px;
+        height: 16px;
+        background: currentColor;
+        clip-path: polygon(28% 0, 72% 0, 78% 14%, 100% 14%, 100% 28%, 88% 28%, 82% 100%, 18% 100%, 12% 28%, 0 28%, 0 14%, 22% 14%);
       }
 
       .delete-design:hover {
@@ -361,7 +491,7 @@
         z-index: 4;
         min-width: 86px;
         padding: 5px 9px;
-        transform: translateX(-50%) scale(var(--control-counter-scale));
+        transform: translateX(-50%);
         transform-origin: center;
         border-radius: 999px;
         color: var(--white);
@@ -411,8 +541,8 @@
       }
 
       .print-art {
-        width: 74%;
-        height: 74%;
+        width: 88%;
+        height: 88%;
         display: grid;
         place-items: center;
         transform: scaleX(var(--art-flip));
@@ -444,10 +574,16 @@
       }
 
       .side-stack > .panel:nth-of-type(2) {
-        grid-column: 1;
-        grid-row: 1 / span 2;
-        max-height: min(720px, calc(100vh - 120px));
-        overflow-y: auto;
+        grid-column: 2;
+        grid-row: 2;
+        max-height: none;
+        overflow: visible;
+        scrollbar-width: thin;
+      }
+
+      .side-stack > .panel:first-child {
+        height: 710px;
+        overflow: hidden;
         scrollbar-width: thin;
       }
 
@@ -695,13 +831,103 @@
       }
 
       .preset-strip {
-        display: grid;
+        display: none;
         grid-auto-flow: column;
         grid-auto-columns: 112px;
         gap: 12px;
         overflow-x: auto;
         padding: 4px 2px 12px;
         scroll-snap-type: x mandatory;
+      }
+
+      .library-shell {
+        display: block;
+        margin-top: 14px;
+      }
+
+      .side-stack > .panel:first-child {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .side-stack > .panel:first-child > .control-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .side-stack > .panel:first-child .library-shell,
+      .side-stack > .panel:first-child .library-drawer,
+      .side-stack > .panel:first-child .library-view {
+        min-height: 0;
+        height: 100%;
+      }
+
+      .side-stack > .panel:first-child .library-shell {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .theme-menu {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .theme-tab {
+        min-height: 38px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.76);
+        font-size: 0.82rem;
+        font-weight: 900;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .theme-tab:hover,
+      .theme-tab.active {
+        color: var(--white);
+        border-color: transparent;
+        background: var(--turquoise-dark);
+      }
+
+      .library-drawer {
+        flex: 1;
+        min-width: 0;
+        overflow-y: auto;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .drawer-head {
+        display: grid;
+        gap: 3px;
+        margin-bottom: 12px;
+      }
+
+      .drawer-head h3 {
+        font-size: 1rem;
+      }
+
+      .drawer-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
       }
 
       .preset-design {
@@ -760,6 +986,59 @@
       .preset-mark.rounded {
         border-radius: 18px;
         background: linear-gradient(135deg, var(--turquoise), var(--cappuccino));
+      }
+
+      .preset-mark.animal {
+        background: #2f6f4e;
+      }
+
+      .preset-mark.school {
+        background: #0f7778;
+      }
+
+      .preset-mark.funny {
+        background: #f25f4c;
+      }
+
+      .preset-mark.nature {
+        background: #315f57;
+      }
+
+      .preset-mark.birthday {
+        background: #5c3b8f;
+      }
+
+      .preset-mark.love {
+        background: #b9405f;
+      }
+
+      .preset-mark.religion {
+        background: #475569;
+      }
+
+      .preset-mark.sport {
+        background: #1769aa;
+      }
+
+      .preset-mark.graffiti {
+        background: #111827;
+      }
+
+      .preset-mark.business {
+        background: #0f7778;
+      }
+
+      .library-view[hidden],
+      .preset-design[hidden] {
+        display: none;
+      }
+
+      .text-editor-drawer {
+        margin-top: 0;
+      }
+
+      .text-editor-drawer[hidden] {
+        display: none;
       }
 
       .preset-svg {
@@ -906,8 +1185,12 @@
       }
 
       .side-stack > .panel:nth-of-type(2) .color-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(30px, 30px));
+        gap: 8px;
+      }
+
+      .side-stack > .panel:nth-of-type(2) .control-group {
+        margin-top: 0;
       }
 
       .swatch {
@@ -917,14 +1200,15 @@
         background: transparent;
         color: var(--muted);
         cursor: pointer;
+        font-size: 0.68rem;
         text-align: left;
       }
 
       .swatch::before {
         content: "";
         display: block;
-        height: 32px;
-        margin-bottom: 5px;
+        height: 30px;
+        margin-bottom: 0;
         border: 1px solid rgba(31, 44, 46, 0.14);
         border-radius: 2px;
         background: var(--swatch);
@@ -940,7 +1224,7 @@
       .swatch::after {
         content: "";
         position: absolute;
-        top: 8px;
+        top: 6px;
         left: 50%;
         width: 14px;
         height: 8px;
@@ -950,10 +1234,11 @@
       }
 
       .swatch span {
-        display: block;
-        overflow-wrap: anywhere;
-        font-size: 0.76rem;
-        line-height: 1.2;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
       }
 
       .swatch:hover::before {
@@ -1026,6 +1311,7 @@
         }
 
         .stage-card,
+        .category-panel,
         .side-stack > .panel:first-child,
         .side-stack > .panel:nth-of-type(2),
         .side-stack > .panel:nth-of-type(3),
@@ -1044,8 +1330,21 @@
           overflow: visible;
         }
 
+        .category-panel {
+          max-height: none;
+          overflow: visible;
+        }
+
         .side-stack > .panel:nth-of-type(2) .color-row {
-          grid-template-columns: repeat(4, minmax(0, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(30px, 30px));
+        }
+
+        .library-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .theme-menu {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .stage-card,
@@ -1079,6 +1378,10 @@
         .bottom-actions {
           grid-template-columns: 1fr;
         }
+
+        .side-stack > .panel:nth-of-type(2) .color-row {
+          grid-template-columns: repeat(auto-fill, minmax(30px, 30px));
+        }
       }
     </style>
   </head>
@@ -1105,7 +1408,7 @@
           <p class="eyebrow">Osnovna lupina</p>
           <h1>Konfigurator <span class="script">majic</span></h1>
           <p>
-            Tehnicna postavitev za urejanje majice: velik predogled, spredaj/zadaj,
+            Tehnična postavitev za urejanje majice: velik predogled, spredaj/zadaj,
             nalaganje slike, zoom, prestavljanje dizajna in izbira barve.
           </p>
         </div>
@@ -1113,14 +1416,20 @@
       </div>
 
       <section class="configurator" aria-label="Konfigurator majic">
+        <div class="panel category-panel">
+          <h3>Teme dizajnov</h3>
+          <div id="categoryMenuHost"></div>
+        </div>
+
         <div class="stage-card">
           <div class="stage" id="stage">
-            <div class="stage-badge">3D Pogled</div>
+            <button class="view-button front-view" type="button" id="frontView">Spredaj</button>
+            <button class="view-button back-view" type="button" id="backView">Zadaj</button>
 
             <div class="model-viewport" id="modelViewport" aria-label="3D predogled majice"></div>
             <div class="print-zone" id="printZone" aria-label="Premakljiv dizajn na majici">
               <div class="print-art" id="printArt">ELUCY<br>print</div>
-              <button class="delete-design" type="button" id="deleteActiveDesign" aria-label="Izbrisi izbrano grafiko">×</button>
+              <button class="delete-design" type="button" id="deleteActiveDesign" aria-label="Izbriši izbrano grafiko">×</button>
               <span class="rotate-handle" id="printRotateHandle" aria-hidden="true"></span>
               <span class="resize-handle" id="printResizeHandle" aria-hidden="true"></span>
               <span class="mode-hint" id="modeHint">Velikost</span>
@@ -1128,10 +1437,22 @@
             <div class="model-status" id="modelStatus">Nalaganje 3D modela majice...</div>
 
             <div class="stage-tools" aria-label="Orodja predogleda">
-              <button class="tool-button" type="button" id="zoomOut" aria-label="Zmanjsaj">-</button>
-              <button class="tool-button" type="button" id="zoomIn" aria-label="Povecaj">+</button>
-              <span class="tool-divider" aria-hidden="true"></span>
-              <button class="tool-button" type="button" id="resetDesign" aria-label="Ponastavi">↺</button>
+              <button class="tool-button" type="button" id="resetDesign" aria-label="Resetiraj na začetek">Resetiraj</button>
+            </div>
+            <button class="undo-button" type="button" id="undoDesign">Razveljavi</button>
+            <div class="stage-image-tools" aria-label="Dodajanje slike">
+              <label class="stage-tool-button" for="imageUpload">Naloži sliko</label>
+              <label class="stage-tool-button" for="svgUpload">Dodaj SVG</label>
+              <input id="imageUpload" type="file" accept="image/*">
+              <input id="svgUpload" type="file" accept=".svg,image/svg+xml">
+            </div>
+            <div class="stage-design-tools" aria-label="Orodja za sliko">
+              <button class="stage-tool-button" type="button" id="removeImage">Odstrani</button>
+              <label class="stage-tool-button stage-toggle" id="removeWhiteBackgroundToggle">
+                <input id="removeWhiteBackground" type="checkbox" checked>
+                <span>Belo ozadje</span>
+              </label>
+              <button class="stage-tool-button" type="button" id="flipImage">Zrcali</button>
             </div>
           </div>
         </div>
@@ -1140,8 +1461,95 @@
           <div class="panel">
             <h2>Knjižnica dizajnov</h2>
             <div class="control-group">
-              <span class="control-label">Prednalozeni dizajni</span>
-              <div class="preset-strip" aria-label="Prednalozeni dizajni">
+              <span class="control-label">Prednaloženi dizajni</span>
+              <div class="library-shell">
+                <div class="theme-menu" aria-label="Teme dizajnov">
+                  <button class="theme-tab active" type="button" data-category="popular">Popularno</button>
+                  <button class="theme-tab" type="button" data-category="school">Šola</button>
+              <button class="theme-tab" type="button" data-category="animals">Živali</button>
+                  <button class="theme-tab" type="button" data-category="funny">Zabavne</button>
+                  <button class="theme-tab" type="button" data-category="nature">Narava</button>
+                  <button class="theme-tab" type="button" data-category="birthday">Rojstni dan</button>
+                  <button class="theme-tab" type="button" data-category="love">Ljubezen</button>
+                  <button class="theme-tab" type="button" data-category="religion">Religija</button>
+                  <button class="theme-tab" type="button" data-category="sport">Šport</button>
+                  <button class="theme-tab" type="button" data-category="graffiti">Grafiti</button>
+                  <button class="theme-tab" type="button" data-category="business">Poslovno</button>
+                  <button class="theme-tab" type="button" data-tool-view="text">Vstavi tekst</button>
+                </div>
+
+                <div class="library-drawer">
+                  <div class="library-view" id="designLibraryView">
+                    <div class="drawer-head">
+                      <h3 id="categoryTitle">Popularno</h3>
+                      <p id="categoryDescription">Najbolj univerzalni motivi za hiter začetek.</p>
+                    </div>
+                    <div class="preset-grid" aria-label="Dizajni iz izbrane teme">
+                      <button class="preset-design" type="button" data-category-item="popular" data-preset="elucy">
+                        <span class="preset-mark">ELUCY<br>print</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="popular" data-preset="badge">
+                        <span class="preset-mark badge">CUSTOM<br>TEE</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="popular" data-preset="script">
+                        <span class="preset-mark script">made<br>easy</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="popular" data-preset="minimal">
+                        <span class="preset-mark">MINI<br>LOGO</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="school" data-preset="school">
+                        <span class="preset-mark school">9.A<br>VALETA</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="school" data-preset="graduate">
+                        <span class="preset-mark school">MATURA<br>2026</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="school" data-preset="school-trip">
+                        <span class="preset-mark school">CLASS<br>TRIP</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="animals" data-preset="animal">
+                        <span class="preset-mark animal">PAW<br>CLUB</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="funny" data-preset="funny">
+                        <span class="preset-mark funny">LOL<br>TEE</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="nature" data-preset="nature">
+                        <span class="preset-mark nature">WILD<br>FLORA</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="birthday" data-preset="birthday">
+                        <span class="preset-mark birthday">HAPPY<br>BDAY</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="love" data-preset="love">
+                        <span class="preset-mark love">LOVE<br>LINE</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="religion" data-preset="religion">
+                        <span class="preset-mark religion">FAITH<br>MARK</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="sport" data-preset="sport">
+                        <span class="preset-mark sport">TEAM<br>PLAY</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="graffiti" data-preset="graffiti">
+                        <span class="preset-mark graffiti">URBAN<br>INK</span>
+                      </button>
+                      <button class="preset-design" type="button" data-category-item="business" data-preset="business">
+                        <span class="preset-mark business">BRAND<br>TEE</span>
+                      </button>
+                      <button class="preset-design svg-fallback" type="button" data-category-item="love" data-svg-preset="assets/designs/heart.svg" data-svg-label="Heart">
+                        <img class="preset-svg" src="assets/designs/heart.svg" alt="Heart">
+                        <span class="preset-svg-label">Heart</span>
+                      </button>
+                      <button class="preset-design svg-fallback" type="button" data-category-item="religion" data-svg-preset="assets/designs/chross.svg" data-svg-label="Chross">
+                        <img class="preset-svg" src="assets/designs/chross.svg" alt="Chross">
+                        <span class="preset-svg-label">Chross</span>
+                      </button>
+                      <button class="preset-design svg-fallback" type="button" data-category-item="business" data-svg-preset="assets/designs/be_the.svg" data-svg-label="Be the">
+                        <img class="preset-svg" src="assets/designs/be_the.svg" alt="Be the">
+                        <span class="preset-svg-label">Be the</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="preset-strip" aria-label="Prednaloženi dizajni">
                 <button class="preset-design" type="button" data-preset="elucy">
                   <span class="preset-mark">ELUCY<br>print</span>
                 </button>
@@ -1179,21 +1587,6 @@
             </div>
 
             <div class="control-group">
-              <span class="control-label">Bitna slika</span>
-              <div class="upload-row">
-                <label class="file-label" for="imageUpload">Nalozi sliko</label>
-                <label class="file-label" for="svgUpload">Dodaj SVG</label>
-                <button class="secondary-button" type="button" id="removeImage">Odstrani</button>
-                <input id="imageUpload" type="file" accept="image/*">
-                <input id="svgUpload" type="file" accept=".svg,image/svg+xml">
-              </div>
-              <label class="image-options">
-                <input id="removeWhiteBackground" type="checkbox" checked>
-                <span>Odstrani belo ozadje</span>
-              </label>
-            </div>
-
-            <div class="control-group">
               <span class="control-label">Dodaj tekst</span>
               <div class="text-tool">
                 <input id="textInput" type="text" placeholder="Vpiši tekst">
@@ -1219,18 +1612,7 @@
               </div>
             </div>
 
-            <div class="control-group">
-              <span class="control-label">Grafike na majici</span>
-              <div class="design-list" id="designList" aria-label="Grafike na majici"></div>
-            </div>
-
-            <div class="control-group">
-              <span class="control-label">Transformacije slike</span>
-              <div class="segmented" role="group" aria-label="Transformacije slike">
-                <button class="segment" type="button" id="flipImage">Zrcali</button>
-                <button class="segment" type="button" id="resetTransform">Reset</button>
-              </div>
-            </div>
+            <div class="design-list" id="designList" aria-label="Grafike na majici" hidden></div>
 
           </div>
 
@@ -1308,7 +1690,7 @@
 
           <div class="bottom-actions">
             <button class="secondary-button" type="button">Shrani osnutek</button>
-            <button class="primary-button" type="button">Nadaljuj na povprasevanje</button>
+            <button class="primary-button" type="button">Nadaljuj na povpraševanje</button>
           </div>
         </aside>
       </section>
@@ -1332,14 +1714,137 @@
       const upload = document.querySelector("#imageUpload");
       const svgUpload = document.querySelector("#svgUpload");
       const removeWhiteBackground = document.querySelector("#removeWhiteBackground");
+      const removeWhiteBackgroundToggle = document.querySelector("#removeWhiteBackgroundToggle");
       const removeImage = document.querySelector("#removeImage");
       const flipImage = document.querySelector("#flipImage");
       const resetTransform = document.querySelector("#resetTransform");
+      const frontView = document.querySelector("#frontView");
+      const backView = document.querySelector("#backView");
+      const undoDesign = document.querySelector("#undoDesign");
       const designList = document.querySelector("#designList");
       const textInput = document.querySelector("#textInput");
       const fontSelect = document.querySelector("#fontSelect");
       const textColor = document.querySelector("#textColor");
       const addTextDesign = document.querySelector("#addTextDesign");
+      const designLibraryView = document.querySelector("#designLibraryView");
+      const libraryDrawer = document.querySelector(".library-drawer");
+      const categoryTitle = document.querySelector("#categoryTitle");
+      const categoryDescription = document.querySelector("#categoryDescription");
+      const categoryMenuHost = document.querySelector("#categoryMenuHost");
+      const themeMenu = document.querySelector(".theme-menu");
+      const textControlGroup = textInput?.closest(".control-group");
+      const categoryDetails = {
+        popular: ["Popularno", "Najbolj univerzalni motivi za hiter začetek."],
+        school: ["Šola", "Predloge za valeto, maturo, razredne majice in šolske izlete."],
+        animals: ["Živali", "Motivi za ljubljenčke, divje živali in igrive ilustracije."],
+        funny: ["Zabavne", "Humor, memi, zabavni napisi in sproščeni potiski."],
+        nature: ["Narava", "Rože, listi, gore, sonce in organski motivi."],
+        birthday: ["Rojstni dan", "Nalepke, praznovanja, darila in personalizirani napisi."],
+        love: ["Ljubezen", "Srčki, pari, družina, prijateljstvo in nežni motivi."],
+        religion: ["Religija", "Simboli vere, miru, upanja in duhovni motivi."],
+        sport: ["Šport", "Ekipe, tekmovanja, fitnes in navijaški potiski."],
+        graffiti: ["Grafiti", "Urban stil, street art, močni napisi in kontrasti."],
+        business: ["Poslovno", "Čiste grafike za ekipe, znamke, dogodke in podjetja."]
+      };
+      const presetFrameMeta = {
+        badge: { frameShape: "wide", frameRatio: 1.7, scale: 0.9 },
+        script: { frameShape: "wide", frameRatio: 2.2, scale: 0.82 },
+        star: { frameShape: "square", frameRatio: 1, scale: 0.9 },
+        bold: { frameShape: "wide", frameRatio: 1.5, scale: 0.9 },
+        wave: { frameShape: "wide", frameRatio: 2.2, scale: 0.82 },
+        minimal: { frameShape: "square", frameRatio: 1, scale: 0.82 },
+        school: { frameShape: "square", frameRatio: 1, scale: 0.82 },
+        graduate: { frameShape: "wide", frameRatio: 1.9, scale: 0.82 },
+        "school-trip": { frameShape: "wide", frameRatio: 2.1, scale: 0.82 },
+        animal: { frameShape: "square", frameRatio: 1, scale: 0.82 },
+        funny: { frameShape: "wide", frameRatio: 1.75, scale: 0.85 },
+        nature: { frameShape: "tall", frameRatio: 0.72, scale: 0.9 },
+        birthday: { frameShape: "wide", frameRatio: 2.1, scale: 0.82 },
+        love: { frameShape: "square", frameRatio: 1, scale: 0.82 },
+        religion: { frameShape: "tall", frameRatio: 0.72, scale: 0.86 },
+        sport: { frameShape: "square", frameRatio: 1, scale: 0.82 },
+        graffiti: { frameShape: "wide", frameRatio: 2.05, scale: 0.82 },
+        business: { frameShape: "wide", frameRatio: 1.55, scale: 0.86 }
+      };
+
+      function showDesignCategory(category) {
+        const details = categoryDetails[category] || categoryDetails.popular;
+        const activeCategory = categoryDetails[category] ? category : "popular";
+        designLibraryView.hidden = false;
+        if (textControlGroup) {
+          textControlGroup.hidden = true;
+        }
+
+        categoryTitle.textContent = details[0];
+        categoryDescription.textContent = details[1];
+        document.querySelectorAll(".theme-tab").forEach((button) => {
+          button.classList.toggle("active", button.dataset.category === activeCategory);
+        });
+
+        document.querySelectorAll("[data-category-item]").forEach((item) => {
+          item.hidden = item.dataset.categoryItem !== activeCategory;
+        });
+      }
+
+      function showTextEditor() {
+        designLibraryView.hidden = true;
+        if (textControlGroup) {
+          textControlGroup.hidden = false;
+        }
+        textInput.focus();
+      }
+
+      function renderRemoveBackgroundToggle() {
+        removeWhiteBackgroundToggle.classList.toggle("checked", removeWhiteBackground.checked);
+      }
+
+      function frameMetricsForDesign(design) {
+        const ratio = THREE.MathUtils.clamp(design.frameRatio || 1, 0.55, 4);
+        let width = 160;
+        let height = 160;
+
+        if (design.frameShape === "wide") {
+          width = 220;
+          height = width / Math.max(ratio, 1.35);
+        } else if (design.frameShape === "tall") {
+          height = 190;
+          width = height * Math.min(ratio, 0.82);
+        } else if (design.frameShape === "text") {
+          width = THREE.MathUtils.clamp(46 * ratio, 96, 260);
+          height = 58;
+        } else {
+          width = 142;
+          height = 142;
+        }
+
+        return {
+          height: Math.round(height),
+          width: Math.round(width)
+        };
+      }
+
+      function applyFrameMetrics(design) {
+        const metrics = frameMetricsForDesign(design);
+        printZone.classList.add("dynamic-frame");
+        printZone.style.setProperty("--frame-width", `${metrics.width}px`);
+        printZone.style.setProperty("--frame-height", `${metrics.height}px`);
+      }
+
+      function applyVisualFrameMetrics(design, visualScale = 1) {
+        const metrics = frameMetricsForDesign(design);
+        printZone.style.setProperty("--frame-width", `${Math.round(metrics.width * visualScale)}px`);
+        printZone.style.setProperty("--frame-height", `${Math.round(metrics.height * visualScale)}px`);
+      }
+
+      if (libraryDrawer && textControlGroup) {
+        textControlGroup.classList.add("text-editor-drawer");
+        libraryDrawer.append(textControlGroup);
+      }
+
+      if (categoryMenuHost && themeMenu) {
+        categoryMenuHost.append(themeMenu);
+      }
+
       const modelUrl = "assets/models/tshirt/T_shirt_gltf.zip.gltf";
       let scale = 1;
       let miniScale = 1;
@@ -1400,7 +1905,8 @@
       controls.enableDamping = true;
       controls.dampingFactor = 0.08;
       controls.enablePan = false;
-      controls.minDistance = 1.4;
+      const closestShirtZoomRatio = 0.88;
+      controls.minDistance = 3.6;
       controls.maxDistance = 7;
       controls.autoRotate = false;
       controls.autoRotateSpeed = 0.8;
@@ -1453,6 +1959,7 @@
         camera.position.set(0, fittedCenter.y + 0.15, 4.1);
         controls.update();
         baseCameraDistance = camera.position.distanceTo(controls.target);
+        controls.minDistance = baseCameraDistance * closestShirtZoomRatio;
       }
 
       function setModelColor(color) {
@@ -1582,21 +2089,70 @@
         const maxY = Math.min(height - 1, Math.ceil(rect.y + rect.height));
         const visited = new Uint8Array(width * height);
         const queue = [];
+        const edgeColors = [];
 
         function indexFor(x, y) {
           return y * width + x;
         }
 
-        function isLightBackground(x, y) {
+        function colorAt(x, y) {
           const offset = indexFor(x, y) * 4;
-          const r = data[offset];
-          const g = data[offset + 1];
-          const b = data[offset + 2];
-          const a = data[offset + 3];
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
+          return {
+            r: data[offset],
+            g: data[offset + 1],
+            b: data[offset + 2],
+            a: data[offset + 3]
+          };
+        }
 
-          return a > 12 && max > 218 && max - min < 42;
+        function isLikelyBackgroundColor(color) {
+          const max = Math.max(color.r, color.g, color.b);
+          const min = Math.min(color.r, color.g, color.b);
+          const saturation = max - min;
+
+          return color.a > 12 && max > 172 && saturation < 78;
+        }
+
+        function addEdgeColor(x, y) {
+          const color = colorAt(x, y);
+
+          if (isLikelyBackgroundColor(color)) {
+            edgeColors.push(color);
+          }
+        }
+
+        const sampleStep = Math.max(1, Math.floor(Math.max(maxX - minX, maxY - minY) / 80));
+
+        for (let x = minX; x <= maxX; x += sampleStep) {
+          addEdgeColor(x, minY);
+          addEdgeColor(x, maxY);
+        }
+
+        for (let y = minY; y <= maxY; y += sampleStep) {
+          addEdgeColor(minX, y);
+          addEdgeColor(maxX, y);
+        }
+
+        if (!edgeColors.length) {
+          edgeColors.push({ r: 255, g: 255, b: 255, a: 255 });
+        }
+
+        function colorDistance(a, b) {
+          return Math.sqrt(
+            (a.r - b.r) ** 2 +
+            (a.g - b.g) ** 2 +
+            (a.b - b.b) ** 2
+          );
+        }
+
+        function isConnectedBackground(x, y) {
+          const color = colorAt(x, y);
+
+          if (!isLikelyBackgroundColor(color)) {
+            return false;
+          }
+
+          return edgeColors.some((edgeColor) => colorDistance(color, edgeColor) < 58);
         }
 
         function addSeed(x, y) {
@@ -1605,7 +2161,7 @@
           }
 
           const index = indexFor(x, y);
-          if (visited[index] || !isLightBackground(x, y)) {
+          if (visited[index] || !isConnectedBackground(x, y)) {
             return;
           }
 
@@ -1821,6 +2377,165 @@
           context.fillText("MINI", 512, 500);
           context.font = "800 54px Arial";
           context.fillText("LOGO", 512, 575);
+        } else if (type === "school") {
+          context.fillStyle = "#0f7778";
+          context.beginPath();
+          context.arc(512, 512, 245, 0, Math.PI * 2);
+          context.fill();
+          context.strokeStyle = "#c7a17a";
+          context.lineWidth = 26;
+          context.stroke();
+          context.fillStyle = "#ffffff";
+          context.font = "900 118px Arial";
+          context.fillText("9.A", 512, 485);
+          context.font = "900 86px Arial";
+          context.fillText("VALETA", 512, 600);
+        } else if (type === "graduate") {
+          context.fillStyle = "#1f2c2e";
+          context.roundRect(165, 310, 694, 320, 52);
+          context.fill();
+          context.fillStyle = "#c7a17a";
+          context.fillRect(430, 245, 164, 80);
+          context.fillStyle = "#ffffff";
+          context.font = "900 112px Georgia";
+          context.fillText("MATURA", 512, 455);
+          context.fillStyle = "#18b7b5";
+          context.font = "900 96px Arial";
+          context.fillText("2026", 512, 570);
+        } else if (type === "school-trip") {
+          context.strokeStyle = "#0f7778";
+          context.lineWidth = 26;
+          context.lineCap = "round";
+          context.beginPath();
+          context.moveTo(190, 610);
+          context.bezierCurveTo(330, 320, 690, 320, 834, 610);
+          context.stroke();
+          context.fillStyle = "#18b7b5";
+          context.beginPath();
+          context.arc(512, 395, 58, 0, Math.PI * 2);
+          context.fill();
+          context.fillStyle = "#1f2c2e";
+          context.font = "900 108px Arial";
+          context.fillText("CLASS", 512, 595);
+          context.fillStyle = "#c7a17a";
+          context.font = "900 86px Arial";
+          context.fillText("TRIP", 512, 700);
+        } else if (type === "animal") {
+          context.fillStyle = "#2f6f4e";
+          context.beginPath();
+          context.arc(512, 560, 122, 0, Math.PI * 2);
+          context.fill();
+          [[390, 410], [470, 340], [555, 340], [635, 410]].forEach(([x, y]) => {
+            context.beginPath();
+            context.arc(x, y, 52, 0, Math.PI * 2);
+            context.fill();
+          });
+          context.fillStyle = "#ffffff";
+          context.font = "900 78px Arial";
+          context.fillText("PAW", 512, 720);
+        } else if (type === "funny") {
+          context.fillStyle = "#f25f4c";
+          context.roundRect(220, 260, 584, 500, 92);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 132px Arial";
+          context.fillText("LOL", 512, 450);
+          context.font = "800 66px Arial";
+          context.fillText("made you look", 512, 590);
+        } else if (type === "nature") {
+          context.strokeStyle = "#315f57";
+          context.lineWidth = 20;
+          context.lineCap = "round";
+          context.beginPath();
+          context.moveTo(512, 760);
+          context.bezierCurveTo(440, 580, 460, 420, 512, 280);
+          context.bezierCurveTo(610, 430, 600, 590, 512, 760);
+          context.stroke();
+          context.fillStyle = "#e8705c";
+          for (let i = 0; i < 6; i += 1) {
+            const angle = i * Math.PI / 3;
+            context.beginPath();
+            context.ellipse(512 + Math.cos(angle) * 78, 410 + Math.sin(angle) * 58, 52, 24, angle, 0, Math.PI * 2);
+            context.fill();
+          }
+          context.fillStyle = "#315f57";
+          context.font = "900 74px Arial";
+          context.fillText("FLORA", 512, 820);
+        } else if (type === "birthday") {
+          context.fillStyle = "#5c3b8f";
+          context.roundRect(170, 320, 684, 360, 90);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 98px Georgia";
+          context.fillText("Happy", 512, 450);
+          context.fillStyle = "#ffb000";
+          context.font = "900 100px Arial";
+          context.fillText("BDAY", 512, 580);
+        } else if (type === "love") {
+          context.fillStyle = "#b9405f";
+          context.beginPath();
+          context.moveTo(512, 730);
+          context.bezierCurveTo(220, 500, 300, 250, 512, 380);
+          context.bezierCurveTo(724, 250, 804, 500, 512, 730);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 84px Arial";
+          context.fillText("LOVE", 512, 520);
+        } else if (type === "religion") {
+          context.strokeStyle = "#475569";
+          context.lineWidth = 46;
+          context.lineCap = "round";
+          context.beginPath();
+          context.moveTo(512, 220);
+          context.lineTo(512, 780);
+          context.moveTo(330, 420);
+          context.lineTo(694, 420);
+          context.stroke();
+          context.fillStyle = "#c7a17a";
+          context.font = "900 70px Arial";
+          context.fillText("FAITH", 512, 860);
+        } else if (type === "sport") {
+          context.fillStyle = "#1769aa";
+          context.beginPath();
+          context.arc(512, 500, 235, 0, Math.PI * 2);
+          context.fill();
+          context.strokeStyle = "#ffffff";
+          context.lineWidth = 24;
+          context.beginPath();
+          context.arc(512, 500, 235, 0, Math.PI * 2);
+          context.moveTo(512, 265);
+          context.bezierCurveTo(410, 410, 410, 590, 512, 735);
+          context.moveTo(512, 265);
+          context.bezierCurveTo(614, 410, 614, 590, 512, 735);
+          context.moveTo(277, 500);
+          context.lineTo(747, 500);
+          context.stroke();
+          context.font = "900 72px Arial";
+          context.fillText("TEAM", 512, 820);
+        } else if (type === "graffiti") {
+          context.fillStyle = "#111827";
+          context.fillRect(170, 340, 684, 300);
+          context.fillStyle = "#e8705c";
+          context.font = "900 132px Impact";
+          context.translate(512, 512);
+          context.rotate(-0.08);
+          context.fillText("URBAN", 0, -10);
+          context.fillStyle = "#18b7b5";
+          context.font = "900 86px Impact";
+          context.fillText("INK", 0, 110);
+          context.setTransform(1, 0, 0, 1, 0, 0);
+        } else if (type === "business") {
+          context.fillStyle = "#0f7778";
+          context.roundRect(250, 270, 524, 450, 34);
+          context.fill();
+          context.fillStyle = "#ffffff";
+          context.font = "900 92px Arial";
+          context.fillText("BRAND", 512, 455);
+          context.font = "700 64px Arial";
+          context.fillText("TEAM", 512, 575);
+          context.strokeStyle = "#c7a17a";
+          context.lineWidth = 16;
+          context.strokeRect(306, 326, 412, 338);
         } else {
           context.fillStyle = "#18b7b5";
           context.beginPath();
@@ -1893,7 +2608,7 @@
         });
 
         image.addEventListener("error", () => {
-          modelStatus.textContent = "SVG datoteke ni bilo mogoce naloziti. Preveri, da je datoteka veljaven SVG.";
+          modelStatus.textContent = "SVG datoteke ni bilo mogoče naložiti. Preveri, da je datoteka veljaven SVG.";
         });
 
         image.src = imageUrl;
@@ -1917,11 +2632,11 @@
             frameShape: svgDesign.frameShape,
             frameRatio: svgDesign.frameRatio
           });
-          modelStatus.textContent = "SVG dizajn iz knjiznice je dodan na majico.";
+          modelStatus.textContent = "SVG dizajn iz knjižnice je dodan na majico.";
         });
 
         image.addEventListener("error", () => {
-          modelStatus.textContent = "SVG dizajna iz knjiznice ni bilo mogoce naloziti.";
+          modelStatus.textContent = "SVG dizajna iz knjižnice ni bilo mogoče naložiti.";
         });
 
         image.src = url;
@@ -1972,6 +2687,7 @@
         printZone.classList.toggle("wide-design", design.frameShape === "wide");
         printZone.classList.toggle("text-design", design.frameShape === "text");
         printZone.classList.toggle("tall-design", design.frameShape === "tall");
+        applyFrameMetrics(design);
         offsetX = design.offsetX;
         offsetY = design.offsetY;
         scale = design.scale;
@@ -2307,13 +3023,13 @@
             fitModelToView(shirtModel);
             setModelColor(getComputedStyle(root).getPropertyValue("--shirt-color").trim() || "#ffffff");
             createDesign(createDefaultDecalTexture(), { isDefault: true });
-            modelStatus.textContent = "3D model je nalozen. Grafika se projicira na majico in ostane na njej med vrtenjem.";
+            modelStatus.textContent = "3D model je naložen. Grafika se projicira na majico in ostane na njej med vrtenjem.";
           },
           undefined,
           (error) => {
             console.error(error);
             modelStatus.textContent =
-              "3D modela ni bilo mogoce naloziti. Preveri, da sta .gltf in .bin datoteki v assets/models/tshirt/ in da je stran odprta prek lokalnega streznika.";
+              "3D modela ni bilo mogoče naložiti. Preveri, da sta .gltf in .bin datoteki v assets/models/tshirt/ in da je stran odprta prek lokalnega strežnika.";
           }
         );
       }
@@ -2338,8 +3054,11 @@
         const visualScale = scale * cameraScale;
         const counterScale = THREE.MathUtils.clamp(1 / visualScale, 0.35, 2.8);
         root.style.setProperty("--control-counter-scale", counterScale);
+        if (activeDesign) {
+          applyVisualFrameMetrics(activeDesign, visualScale);
+        }
         printZone.style.transform =
-          `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${-artRotation}deg) scale(${visualScale})`;
+          `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${-artRotation}deg)`;
       }
 
       function currentMiniPrint() {
@@ -2393,6 +3112,8 @@
 
       function setActiveSide(side) {
         selectedSide = side;
+        frontView.classList.toggle("active", side === "front");
+        backView.classList.toggle("active", side === "back");
         document.querySelectorAll(".mini-shirt").forEach((shirt) => {
           const isActive = shirt.dataset.sidePreview === selectedSide;
           shirt.classList.toggle("active", isActive);
@@ -2402,6 +3123,44 @@
         miniOffsetY = 0;
         renderMiniPrintTransform();
         renderArtMode();
+      }
+
+      function setShirtView(side) {
+        setActiveSide(side);
+
+        const target = controls.target.clone();
+        const distance = THREE.MathUtils.clamp(
+          camera.position.distanceTo(controls.target) || baseCameraDistance || 4.1,
+          controls.minDistance,
+          controls.maxDistance
+        );
+        const yOffset = 0.15;
+        camera.position.set(target.x, target.y + yOffset, target.z + (side === "back" ? -distance : distance));
+        camera.lookAt(target);
+        controls.update();
+        renderPrintTransform();
+        syncOverlayToDecal(true);
+      }
+
+      function resetToStart() {
+        designs.slice().forEach((design) => removeDesign(design, false));
+        offsetX = 0;
+        offsetY = 0;
+        miniOffsetX = 0;
+        miniOffsetY = 0;
+        artRotation = 0;
+        artFlip = 1;
+        setScale(1, false);
+        setMiniScale(1);
+        root.style.setProperty("--shirt-color", "#ffffff");
+        setModelColor("#ffffff");
+        document.querySelectorAll(".swatch").forEach((item) => {
+          item.classList.toggle("active", item.dataset.color.toLowerCase() === "#ffffff");
+        });
+        createDesign(createDefaultDecalTexture(), { isDefault: true });
+        setShirtView("front");
+        renderArtTransform();
+        modelStatus.textContent = "Oblikovanje je resetirano na začetek.";
       }
 
       function renderArtTransform(rebuild = true) {
@@ -2632,17 +3391,28 @@
         hideDesignControls();
       });
 
-      document.querySelector("#zoomIn").addEventListener("click", () => setScale(scale + 0.1));
-      document.querySelector("#zoomOut").addEventListener("click", () => setScale(scale - 0.1));
+      frontView.addEventListener("click", () => setShirtView("front"));
+      backView.addEventListener("click", () => setShirtView("back"));
+      undoDesign.addEventListener("click", () => {
+        const target = [...designs].reverse().find((design) => !design.isDefault);
+
+        if (!target) {
+          modelStatus.textContent = "Ni dodanega dizajna za razveljavitev.";
+          return;
+        }
+
+        applyDesignToControls(target);
+        removeDesign(target, true);
+        modelStatus.textContent = "Zadnji dodani dizajn je razveljavljen.";
+      });
       document.querySelector("#resetDesign").addEventListener("click", () => {
-        offsetX = 0;
-        offsetY = 0;
-        miniOffsetX = 0;
-        miniOffsetY = 0;
-        setScale(1);
-        setMiniScale(1);
-        renderMiniPrintTransform();
-        updateDecalFromOverlay();
+        const confirmed = window.confirm(
+          "Ali resnično želiš resetirati oblikovanje? S tem boste izgubili trenutno delo."
+        );
+
+        if (confirmed) {
+          resetToStart();
+        }
       });
 
       flipImage.addEventListener("click", () => {
@@ -2650,11 +3420,15 @@
         renderArtTransform();
       });
 
-      resetTransform.addEventListener("click", () => {
-        artRotation = 0;
-        artFlip = 1;
-        renderArtTransform();
-      });
+      if (resetTransform) {
+        resetTransform.addEventListener("click", () => {
+          artRotation = 0;
+          artFlip = 1;
+          renderArtTransform();
+        });
+      }
+
+      removeWhiteBackground.addEventListener("change", renderRemoveBackgroundToggle);
 
       document.querySelectorAll(".swatch").forEach((button) => {
         button.addEventListener("click", () => {
@@ -2778,10 +3552,6 @@
           return;
         }
 
-        if (/jpe?g$/i.test(file.name) || file.type === "image/jpeg") {
-          removeWhiteBackground.checked = false;
-        }
-
         uploadedImageUrl = URL.createObjectURL(file);
         const image = document.createElement("img");
         image.alt = "Nalozena slika za tisk";
@@ -2820,13 +3590,29 @@
         svgUpload.value = "";
       });
 
+      document.querySelectorAll(".theme-tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".theme-tab").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+
+          if (button.dataset.toolView === "text") {
+            showTextEditor();
+            return;
+          }
+
+          showDesignCategory(button.dataset.category || "popular");
+        });
+      });
+
       document.querySelectorAll("[data-preset]").forEach((button) => {
         button.addEventListener("click", () => {
+          const presetOptions = presetFrameMeta[button.dataset.preset] || {};
           addTextureAsDesign(
             createPresetDecalTexture(button.dataset.preset),
-            button.querySelector(".preset-mark")?.textContent.replace(/\s+/g, " ").trim() || "Prednalozen dizajn"
+            button.querySelector(".preset-mark")?.textContent.replace(/\s+/g, " ").trim() || "Prednaložen dizajn",
+            presetOptions
           );
-          modelStatus.textContent = "Prednalozen dizajn je dodan na majico.";
+          modelStatus.textContent = "Prednaložen dizajn je dodan na majico.";
         });
       });
 
@@ -2898,10 +3684,13 @@
       deleteActiveDesign.addEventListener("pointerdown", (event) => {
         event.stopPropagation();
       });
+      const initialCategory = new URLSearchParams(window.location.search).get("category") || "popular";
+      showDesignCategory(initialCategory);
       setActiveSide("front");
       setMiniDesignContent();
       renderArtTransform();
       renderArtMode();
+      renderRemoveBackgroundToggle();
     </script>
   </body>
 </html>
