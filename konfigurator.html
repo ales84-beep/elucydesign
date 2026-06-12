@@ -17,10 +17,12 @@
       }
     </script>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap");
+
       :root {
-        --turquoise: #18b7b5;
-        --turquoise-dark: #0f7778;
-        --turquoise-soft: #dff6f4;
+        --turquoise: #9ce1d1;
+        --turquoise-dark: #2f7f73;
+        --turquoise-soft: #eefaf7;
         --white: #ffffff;
         --cappuccino: #c7a17a;
         --cappuccino-soft: #f1e6db;
@@ -91,7 +93,7 @@
 
       .brand-script,
       .script {
-        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-family: "Caveat", "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
         font-weight: 500;
         color: var(--cappuccino-dark);
       }
@@ -311,9 +313,9 @@
       }
 
       .stage-toggle.checked {
-        color: var(--white);
-        border-color: var(--turquoise-dark);
-        background: var(--turquoise-dark);
+        color: var(--ink);
+        border-color: var(--turquoise);
+        background: var(--turquoise);
       }
 
       .stage-toggle input {
@@ -361,6 +363,72 @@
 
       .undo-button:hover {
         background: var(--turquoise-soft);
+      }
+
+      .stage-color-picker {
+        position: absolute;
+        left: 50%;
+        bottom: 20px;
+        z-index: 7;
+        transform: translateX(-50%);
+      }
+
+      .color-toggle {
+        min-width: 164px;
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--turquoise-dark);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 10px 24px rgba(31, 44, 46, 0.1);
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .color-toggle::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border: 1px solid rgba(31, 44, 46, 0.16);
+        border-radius: 999px;
+        background: var(--selected-shirt-color, #ffffff);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+      }
+
+      .stage-color-popover {
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 10px);
+        width: min(430px, calc(100vw - 42px));
+        max-height: 230px;
+        overflow-y: auto;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 18px 42px rgba(31, 44, 46, 0.16);
+        transform: translateX(-50%);
+      }
+
+      .stage-color-popover[hidden] {
+        display: none;
+      }
+
+      .stage-color-popover .color-row {
+        grid-template-columns: repeat(auto-fill, minmax(30px, 30px));
+        gap: 8px;
+      }
+
+      .stage-card > .price-panel {
+        margin-top: 18px;
+        box-shadow: var(--shadow);
       }
 
       .tool-divider {
@@ -799,8 +867,8 @@
       }
 
       .segment.active {
-        color: var(--white);
-        background: var(--turquoise-dark);
+        color: var(--ink);
+        background: var(--turquoise);
       }
 
       .upload-row {
@@ -892,9 +960,9 @@
 
       .theme-tab:hover,
       .theme-tab.active {
-        color: var(--white);
+        color: var(--ink);
         border-color: transparent;
-        background: var(--turquoise-dark);
+        background: var(--turquoise);
       }
 
       .library-drawer {
@@ -969,7 +1037,7 @@
       .preset-mark.script {
         color: var(--cappuccino-dark);
         background: transparent;
-        font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+        font-family: "Caveat", "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
         font-size: 1.1rem;
       }
 
@@ -1048,6 +1116,7 @@
       }
 
       .preset-svg-label {
+        display: none;
         color: var(--ink);
         font-size: 0.78rem;
         font-weight: 900;
@@ -1139,9 +1208,9 @@
       }
 
       .design-chip.active {
-        color: var(--white);
-        border-color: var(--turquoise-dark);
-        background: var(--turquoise-dark);
+        color: var(--ink);
+        border-color: var(--turquoise);
+        background: var(--turquoise);
       }
 
       .file-label,
@@ -1165,9 +1234,97 @@
       }
 
       .primary-button {
-        border: 1px solid var(--turquoise-dark);
-        color: var(--white);
-        background: var(--turquoise-dark);
+        border: 1px solid var(--turquoise);
+        color: var(--ink);
+        background: var(--turquoise);
+      }
+
+      .price-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .field input,
+      .field select {
+        min-width: 0;
+        min-height: 40px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.86);
+        font: inherit;
+        font-weight: 800;
+      }
+
+      .price-summary {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(223, 246, 244, 0.45);
+      }
+
+      .price-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 800;
+      }
+
+      .price-line strong {
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .price-total {
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(31, 44, 46, 0.1);
+      }
+
+      .price-total strong {
+        color: var(--turquoise-dark);
+        font-size: 1.22rem;
+      }
+
+      .price-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
+      .quote-warning {
+        display: none;
+        padding: 10px;
+        border: 1px solid rgba(124, 95, 69, 0.2);
+        border-radius: 8px;
+        color: var(--cappuccino-dark);
+        background: rgba(241, 230, 219, 0.58);
+        font-size: 0.84rem;
+        font-weight: 800;
+        line-height: 1.45;
+      }
+
+      .quote-warning.visible {
+        display: block;
       }
 
       input[type="file"] {
@@ -1394,9 +1551,9 @@
         </a>
 
         <div class="nav-links">
-          <a href="index.html">Domov</a>
           <a class="active" href="konfigurator.html">Konfigurator</a>
           <a href="index.html#storitve">Izdelki</a>
+          <a href="kosarica.html">Košarica</a>
           <a href="index.html#kontakt">Kontakt</a>
         </div>
       </nav>
@@ -1405,14 +1562,13 @@
     <main class="page">
       <div class="intro">
         <div>
-          <p class="eyebrow">Osnovna lupina</p>
           <h1>Konfigurator <span class="script">majic</span></h1>
           <p>
             Tehnična postavitev za urejanje majice: velik predogled, spredaj/zadaj,
             nalaganje slike, zoom, prestavljanje dizajna in izbira barve.
           </p>
         </div>
-        <a class="back-link" href="index.html">Nazaj na stran</a>
+        <a class="back-link" href="index.html">Domov</a>
       </div>
 
       <section class="configurator" aria-label="Konfigurator majic">
@@ -1453,6 +1609,10 @@
                 <span>Belo ozadje</span>
               </label>
               <button class="stage-tool-button" type="button" id="flipImage">Zrcali</button>
+            </div>
+            <div class="stage-color-picker" id="stageColorPicker">
+              <button class="color-toggle" type="button" id="colorToggle">Barva majice</button>
+              <div class="stage-color-popover" id="stageColorPopover" hidden></div>
             </div>
           </div>
         </div>
@@ -1594,7 +1754,7 @@
                   <option value="Inter, Arial, sans-serif">Clean sans</option>
                   <option value="Arial Black, Arial, sans-serif">Bold sans</option>
                   <option value="Georgia, serif">Classic serif</option>
-                  <option value="Segoe Script">Ročna pisava</option>
+                  <option value="Caveat, Segoe Script, cursive">Ročna pisava</option>
                   <option value="Impact">Močna pisava</option>
                 </select>
                 <div class="text-options">
@@ -1616,7 +1776,7 @@
 
           </div>
 
-          <div class="panel">
+          <div class="panel" id="shirtColorPanel">
             <h3>Barva majice</h3>
             <div class="control-group">
               <div class="color-row" aria-label="Moznosti barve majice">
@@ -1664,34 +1824,55 @@
             </div>
           </div>
 
-          <div class="panel">
-            <h3>Podobni izdelki</h3>
+          <div class="panel price-panel" id="pricePanel">
+            <h3>Izračun cene</h3>
             <div class="control-group">
-              <div class="mockups" aria-label="Podobni mockupi">
-                <div class="mockup-tile">
-                  <div class="mockup-thumb"></div>
-                  <span>Basic T-shirt</span>
+              <div class="price-fields">
+                <label class="field">
+                  <span>Količina majic</span>
+                  <input id="shirtQuantity" type="number" min="1" step="1" value="1">
+                </label>
+                <label class="field">
+                  <span>Format tiska - samodejno</span>
+                  <select id="printFormat" disabled>
+                    <option value="8x8">Logo na prsih 8 x 8 cm</option>
+                    <option value="15x15">Srednji tisk 15 x 15 cm</option>
+                    <option value="20x20">Večji tisk 20 x 20 cm</option>
+                    <option value="30x30">Maks. standard 30 x 30 cm</option>
+                    <option value="40x30">Večji format 40 x 30 cm</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="price-summary" aria-live="polite">
+                <div class="price-line">
+                  <span>Majica</span>
+                  <strong id="shirtPriceLine">7,00 € / kos</strong>
                 </div>
-                <div class="mockup-tile">
-                  <div class="mockup-thumb"></div>
-                  <span>Premium shirt</span>
+                <div class="price-line">
+                  <span>Tisk</span>
+                  <strong id="printPriceLine">5,00 € / kos</strong>
                 </div>
-                <div class="mockup-tile">
-                  <div class="mockup-thumb"></div>
-                  <span>Oversize majica</span>
+                <div class="price-line">
+                  <span>Cena na kos</span>
+                  <strong id="unitPriceLine">12,00 €</strong>
                 </div>
-                <div class="mockup-tile">
-                  <div class="mockup-thumb"></div>
-                  <span>Otroška majica</span>
+                <div class="price-line price-total">
+                  <span>Skupaj</span>
+                  <strong id="totalPriceLine">12,00 €</strong>
                 </div>
               </div>
+
+              <p class="price-note" id="priceNote">
+                Izračun je informativen. Cena tiska se niža glede na količino.
+              </p>
+              <div class="quote-warning" id="quoteWarning">
+                Za večje formate pripravimo ročno ponudbo, ker je cena odvisna od materiala, pozicije in načina tiska.
+              </div>
+              <button class="primary-button" type="button" id="addToCart">Dodaj v košarico</button>
             </div>
           </div>
 
-          <div class="bottom-actions">
-            <button class="secondary-button" type="button">Shrani osnutek</button>
-            <button class="primary-button" type="button">Nadaljuj na povpraševanje</button>
-          </div>
         </aside>
       </section>
     </main>
@@ -1704,6 +1885,7 @@
 
       const root = document.documentElement;
       const modelViewport = document.querySelector("#modelViewport");
+      const stageCard = document.querySelector(".stage-card");
       const modelStatus = document.querySelector("#modelStatus");
       const printZone = document.querySelector("#printZone");
       const printResizeHandle = document.querySelector("#printResizeHandle");
@@ -1726,6 +1908,19 @@
       const fontSelect = document.querySelector("#fontSelect");
       const textColor = document.querySelector("#textColor");
       const addTextDesign = document.querySelector("#addTextDesign");
+      const shirtQuantity = document.querySelector("#shirtQuantity");
+      const printFormat = document.querySelector("#printFormat");
+      const shirtPriceLine = document.querySelector("#shirtPriceLine");
+      const printPriceLine = document.querySelector("#printPriceLine");
+      const unitPriceLine = document.querySelector("#unitPriceLine");
+      const totalPriceLine = document.querySelector("#totalPriceLine");
+      const priceNote = document.querySelector("#priceNote");
+      const quoteWarning = document.querySelector("#quoteWarning");
+      const addToCart = document.querySelector("#addToCart");
+      const shirtColorPanel = document.querySelector("#shirtColorPanel");
+      const pricePanel = document.querySelector("#pricePanel");
+      const colorToggle = document.querySelector("#colorToggle");
+      const stageColorPopover = document.querySelector("#stageColorPopover");
       const designLibraryView = document.querySelector("#designLibraryView");
       const libraryDrawer = document.querySelector(".library-drawer");
       const categoryTitle = document.querySelector("#categoryTitle");
@@ -1747,24 +1942,24 @@
         business: ["Poslovno", "Čiste grafike za ekipe, znamke, dogodke in podjetja."]
       };
       const presetFrameMeta = {
-        badge: { frameShape: "wide", frameRatio: 1.7, scale: 0.9 },
-        script: { frameShape: "wide", frameRatio: 2.2, scale: 0.82 },
-        star: { frameShape: "square", frameRatio: 1, scale: 0.9 },
-        bold: { frameShape: "wide", frameRatio: 1.5, scale: 0.9 },
-        wave: { frameShape: "wide", frameRatio: 2.2, scale: 0.82 },
-        minimal: { frameShape: "square", frameRatio: 1, scale: 0.82 },
-        school: { frameShape: "square", frameRatio: 1, scale: 0.82 },
-        graduate: { frameShape: "wide", frameRatio: 1.9, scale: 0.82 },
-        "school-trip": { frameShape: "wide", frameRatio: 2.1, scale: 0.82 },
-        animal: { frameShape: "square", frameRatio: 1, scale: 0.82 },
-        funny: { frameShape: "wide", frameRatio: 1.75, scale: 0.85 },
-        nature: { frameShape: "tall", frameRatio: 0.72, scale: 0.9 },
-        birthday: { frameShape: "wide", frameRatio: 2.1, scale: 0.82 },
-        love: { frameShape: "square", frameRatio: 1, scale: 0.82 },
-        religion: { frameShape: "tall", frameRatio: 0.72, scale: 0.86 },
-        sport: { frameShape: "square", frameRatio: 1, scale: 0.82 },
-        graffiti: { frameShape: "wide", frameRatio: 2.05, scale: 0.82 },
-        business: { frameShape: "wide", frameRatio: 1.55, scale: 0.86 }
+        badge: { frameShape: "wide", frameRatio: 1.7, scale: 0.9, printWidth: 10, printHeight: 6 },
+        script: { frameShape: "wide", frameRatio: 2.2, scale: 0.82, printWidth: 12, printHeight: 5.5 },
+        star: { frameShape: "square", frameRatio: 1, scale: 0.9, printWidth: 8, printHeight: 8 },
+        bold: { frameShape: "wide", frameRatio: 1.5, scale: 0.9, printWidth: 12, printHeight: 8 },
+        wave: { frameShape: "wide", frameRatio: 2.2, scale: 0.82, printWidth: 13, printHeight: 6 },
+        minimal: { frameShape: "square", frameRatio: 1, scale: 0.82, printWidth: 6, printHeight: 6 },
+        school: { frameShape: "square", frameRatio: 1, scale: 0.82, printWidth: 8, printHeight: 8 },
+        graduate: { frameShape: "wide", frameRatio: 1.9, scale: 0.82, printWidth: 14, printHeight: 7.5 },
+        "school-trip": { frameShape: "wide", frameRatio: 2.1, scale: 0.82, printWidth: 14, printHeight: 7 },
+        animal: { frameShape: "square", frameRatio: 1, scale: 0.82, printWidth: 8, printHeight: 8 },
+        funny: { frameShape: "wide", frameRatio: 1.75, scale: 0.85, printWidth: 11, printHeight: 6.5 },
+        nature: { frameShape: "tall", frameRatio: 0.72, scale: 0.9, printWidth: 8, printHeight: 12 },
+        birthday: { frameShape: "wide", frameRatio: 2.1, scale: 0.82, printWidth: 13, printHeight: 6 },
+        love: { frameShape: "square", frameRatio: 1, scale: 0.82, printWidth: 8, printHeight: 8 },
+        religion: { frameShape: "tall", frameRatio: 0.72, scale: 0.86, printWidth: 8, printHeight: 11 },
+        sport: { frameShape: "square", frameRatio: 1, scale: 0.82, printWidth: 8, printHeight: 8 },
+        graffiti: { frameShape: "wide", frameRatio: 2.05, scale: 0.82, printWidth: 14, printHeight: 7 },
+        business: { frameShape: "wide", frameRatio: 1.55, scale: 0.86, printWidth: 10, printHeight: 6.5 }
       };
 
       function showDesignCategory(category) {
@@ -1796,6 +1991,235 @@
 
       function renderRemoveBackgroundToggle() {
         removeWhiteBackgroundToggle.classList.toggle("checked", removeWhiteBackground.checked);
+      }
+
+      function selectedShirtColorValue() {
+        const activeSwatch = document.querySelector(".swatch.active");
+        return activeSwatch?.dataset.color || "#ffffff";
+      }
+
+      function renderColorToggle() {
+        root.style.setProperty("--selected-shirt-color", selectedShirtColorValue());
+      }
+
+      function placeStageControls() {
+        const colorRow = shirtColorPanel?.querySelector(".color-row");
+
+        if (colorRow && stageColorPopover) {
+          stageColorPopover.append(colorRow);
+          shirtColorPanel.hidden = true;
+        }
+
+        if (pricePanel && stageCard && pricePanel.parentElement !== stageCard) {
+          stageCard.append(pricePanel);
+        }
+
+        renderColorToggle();
+      }
+
+      function formatEuro(value) {
+        return `${value.toLocaleString("sl-SI", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })} €`;
+      }
+
+      function basePrintPriceForQuantity(quantity) {
+        if (quantity >= 100) {
+          return 1;
+        }
+
+        if (quantity >= 50) {
+          return 1.5;
+        }
+
+        if (quantity >= 20) {
+          return 2;
+        }
+
+        if (quantity >= 10) {
+          return 3;
+        }
+
+        return 5;
+      }
+
+      function formatAreaMultiplier(width, height) {
+        const baseArea = 8 * 8;
+        const area = width * height;
+        return Math.sqrt(area / baseArea);
+      }
+
+      function defaultPrintSizeForShape(frameShape = "square", frameRatio = 1) {
+        const ratio = THREE.MathUtils.clamp(frameRatio || 1, 0.35, 8);
+
+        if (frameShape === "wide" || frameShape === "text") {
+          return {
+            printWidth: 12,
+            printHeight: Math.round((12 / ratio) * 2) / 2
+          };
+        }
+
+        if (frameShape === "tall") {
+          return {
+            printWidth: Math.round((12 * ratio) * 2) / 2,
+            printHeight: 12
+          };
+        }
+
+        return {
+          printWidth: 8,
+          printHeight: 8
+        };
+      }
+
+      function printableDesigns() {
+        captureActiveDesignState();
+        return designs.filter((design) => design.texture);
+      }
+
+      function printDimensionsForDesign(design) {
+        const ratio = THREE.MathUtils.clamp(design.frameRatio || 1, 0.35, 8);
+        const designScale = Math.max(0.25, Number(design.scale || 1));
+        let width = (design.printWidth || 0) * designScale;
+        let height = (design.printHeight || 0) * designScale;
+
+        if (!width || !height) {
+          const baseSize = 8 * designScale;
+          width = baseSize * Math.sqrt(ratio);
+          height = baseSize / Math.sqrt(ratio);
+
+          if (design.frameShape === "text" || design.frameShape === "wide") {
+            width = Math.max(width, baseSize * 1.25);
+          }
+
+          if (design.frameShape === "tall") {
+            height = Math.max(height, baseSize * 1.25);
+          }
+        }
+
+        return {
+          width: Math.round(width * 2) / 2,
+          height: Math.round(height * 2) / 2
+        };
+      }
+
+      function formatPrintSize(width, height) {
+        return `${width.toLocaleString("sl-SI")} x ${height.toLocaleString("sl-SI")} cm`;
+      }
+
+      function autoFormatValue(maxWidth, maxHeight) {
+        if (maxWidth > 30 || maxHeight > 30) {
+          return "40x30";
+        }
+
+        const maxSide = Math.max(maxWidth, maxHeight);
+
+        if (maxSide <= 8) {
+          return "8x8";
+        }
+
+        if (maxSide <= 15) {
+          return "15x15";
+        }
+
+        if (maxSide <= 20) {
+          return "20x20";
+        }
+
+        return "30x30";
+      }
+
+      function currentPriceEstimate() {
+        const quantity = Math.max(1, Math.floor(Number(shirtQuantity.value) || 1));
+        const printItems = printableDesigns().map((design, index) => {
+          const dimensions = printDimensionsForDesign(design);
+          const quoteOnly = dimensions.width > 30 || dimensions.height > 30;
+
+          return {
+            label: design.label || (design.isDefault ? "Osnovna grafika" : `Grafika ${index + 1}`),
+            width: dimensions.width,
+            height: dimensions.height,
+            quoteOnly,
+            multiplier: formatAreaMultiplier(dimensions.width, dimensions.height)
+          };
+        });
+        const maxWidth = Math.max(8, ...printItems.map((item) => item.width));
+        const maxHeight = Math.max(8, ...printItems.map((item) => item.height));
+        const quoteOnly = printItems.some((item) => item.quoteOnly);
+        const shirtUnit = 7;
+        const basePrintUnit = basePrintPriceForQuantity(quantity);
+        const printUnit = quoteOnly ? 0 : printItems.reduce((sum, item) => sum + basePrintUnit * item.multiplier, 0);
+        const unitTotal = quoteOnly ? 0 : shirtUnit + printUnit;
+        const total = quoteOnly ? 0 : unitTotal * quantity;
+        const autoFormat = autoFormatValue(maxWidth, maxHeight);
+
+        if (printFormat.value !== autoFormat) {
+          printFormat.value = autoFormat;
+        }
+
+        return {
+          quantity,
+          width: maxWidth,
+          height: maxHeight,
+          quoteOnly,
+          shirtUnit,
+          printUnit,
+          unitTotal,
+          total,
+          printItems,
+          label: printItems.length
+            ? printItems.map((item) => `${item.label}: ${formatPrintSize(item.width, item.height)}`).join(", ")
+            : "Brez grafike"
+        };
+      }
+
+      function renderPriceEstimate() {
+        const estimate = currentPriceEstimate();
+        shirtQuantity.value = estimate.quantity;
+        shirtPriceLine.textContent = `${formatEuro(estimate.shirtUnit)} / kos`;
+
+        if (estimate.quoteOnly) {
+          printPriceLine.textContent = "po ponudbi";
+          unitPriceLine.textContent = "po ponudbi";
+          totalPriceLine.textContent = "povpraševanje";
+          priceNote.textContent = "Vsaj ena grafika presega standardni format 30 x 30 cm. Dodaj povpraševanje in ceno pripravimo ročno.";
+          quoteWarning.classList.add("visible");
+          addToCart.textContent = "Pošlji v povpraševanje";
+          return estimate;
+        }
+
+        printPriceLine.textContent = `${formatEuro(estimate.printUnit)} / kos`;
+        unitPriceLine.textContent = formatEuro(estimate.unitTotal);
+        totalPriceLine.textContent = formatEuro(estimate.total);
+        priceNote.textContent = `Informativno za ${estimate.quantity} kos. Tisk: ${estimate.label}. Vsaka dodana grafika se prišteje posebej.`;
+        quoteWarning.classList.remove("visible");
+        addToCart.textContent = "Dodaj v košarico";
+        return estimate;
+      }
+
+      function selectedShirtColorName() {
+        const activeSwatch = document.querySelector(".swatch.active");
+        return activeSwatch?.querySelector("span")?.textContent || activeSwatch?.getAttribute("aria-label") || "White";
+      }
+
+      function addEstimateToCart() {
+        const estimate = renderPriceEstimate();
+        const cart = JSON.parse(localStorage.getItem("elucyCart") || "[]");
+        cart.push({
+          id: Date.now(),
+          product: "Basic T-shirt",
+          color: selectedShirtColorName(),
+          quantity: estimate.quantity,
+          printFormat: estimate.label,
+          quoteOnly: estimate.quoteOnly,
+          shirtUnit: estimate.shirtUnit,
+          printUnit: estimate.printUnit,
+          unitTotal: estimate.unitTotal,
+          total: estimate.total
+        });
+        localStorage.setItem("elucyCart", JSON.stringify(cart));
+        window.location.href = "kosarica.html";
       }
 
       function frameMetricsForDesign(design) {
@@ -1874,6 +2298,11 @@
       let rotateStartRotation = 0;
       let miniRotateStartAngle = 0;
       let miniRotateStartRotation = 0;
+      let pinchStartDistance = 0;
+      let pinchStartScale = 1;
+      let pinchStartAngle = 0;
+      let pinchStartRotation = 0;
+      let pinchingDesign = false;
       let artRotation = 0;
       let artFlip = 1;
       let artMode = "resize";
@@ -1886,6 +2315,7 @@
       let uploadedImageUrl = "";
       let baseCameraDistance = 0;
       let lastDraftDecalUpdate = 0;
+      const activeDesignTouches = new Map();
       const raycaster = new THREE.Raycaster();
 
       const scene = new THREE.Scene();
@@ -2265,6 +2695,19 @@
           .join(", ");
       }
 
+      async function ensureCanvasFontReady(fontFamily) {
+        if (!document.fonts || !fontFamily.toLowerCase().includes("caveat")) {
+          return;
+        }
+
+        try {
+          await document.fonts.load(`700 170px ${cssFontFamily(fontFamily)}`);
+          await document.fonts.ready;
+        } catch (error) {
+          console.warn("Pisave ni bilo mogoče vnaprej naložiti.", error);
+        }
+      }
+
       function createTextDecalTexture(text, fontFamily, color) {
         const canvas = document.createElement("canvas");
         canvas.width = 2048;
@@ -2322,7 +2765,7 @@
           context.fillText("TEE", 512, 600);
         } else if (type === "script") {
           context.fillStyle = "#7c5f45";
-          context.font = "500 150px Segoe Script";
+          context.font = "600 170px Caveat, Segoe Script, cursive";
           context.fillText("made", 512, 445);
           context.fillStyle = "#18b7b5";
           context.font = "800 142px Arial";
@@ -2573,7 +3016,8 @@
               offsetY: 0,
               scale: imageDesign.frameShape === "wide" ? 0.82 : 1,
               frameShape: imageDesign.frameShape,
-              frameRatio: imageDesign.frameRatio
+              frameRatio: imageDesign.frameRatio,
+              ...defaultPrintSizeForShape(imageDesign.frameShape, imageDesign.frameRatio)
             });
             modelStatus.textContent = options.removeBackground
               ? "Nova grafika je dodana na majico. Belo ozadje je odstranjeno."
@@ -2602,7 +3046,8 @@
             offsetY: 0,
             scale: svgDesign.frameShape === "wide" ? 0.82 : 1,
             frameShape: svgDesign.frameShape,
-            frameRatio: svgDesign.frameRatio
+            frameRatio: svgDesign.frameRatio,
+            ...defaultPrintSizeForShape(svgDesign.frameShape, svgDesign.frameRatio)
           });
           modelStatus.textContent = "SVG dizajn je dodan na majico.";
         });
@@ -2630,7 +3075,8 @@
             offsetY: 0,
             scale: svgDesign.frameShape === "wide" ? 0.82 : 1,
             frameShape: svgDesign.frameShape,
-            frameRatio: svgDesign.frameRatio
+            frameRatio: svgDesign.frameRatio,
+            ...defaultPrintSizeForShape(svgDesign.frameShape, svgDesign.frameRatio)
           });
           modelStatus.textContent = "SVG dizajn iz knjižnice je dodan na majico.";
         });
@@ -2723,6 +3169,8 @@
           label: options.label || "",
           frameShape: options.frameShape || "square",
           frameRatio: options.frameRatio || 1,
+          printWidth: options.printWidth || 0,
+          printHeight: options.printHeight || 0,
           targetObject: null,
           isDefault: Boolean(options.isDefault),
           offsetX: options.offsetX ?? 0,
@@ -2739,6 +3187,7 @@
         applyDesignToControls(design);
         updateDecalFromOverlay();
         renderDesignList();
+        renderPriceEstimate();
         return design;
       }
 
@@ -2772,6 +3221,7 @@
           printZone.style.display = "none";
           renderDesignList();
         }
+        renderPriceEstimate();
       }
 
       function removeDefaultDesigns() {
@@ -2789,6 +3239,8 @@
           scale: options.scale ?? 1,
           frameShape: options.frameShape || "square",
           frameRatio: options.frameRatio || 1,
+          printWidth: options.printWidth || 0,
+          printHeight: options.printHeight || 0,
           imageUrl: options.imageUrl || ""
         });
       }
@@ -3081,6 +3533,8 @@
         scale = Math.min(4, Math.max(0.25, nextScale));
         root.style.setProperty("--print-scale", scale);
         renderPrintTransform();
+        captureActiveDesignState();
+        renderPriceEstimate();
         if (rebuild) {
           rebuildActiveDecalAtAnchor();
         }
@@ -3197,6 +3651,70 @@
         return Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180 / Math.PI;
       }
 
+      function touchDistance(first, second) {
+        return Math.hypot(second.x - first.x, second.y - first.y);
+      }
+
+      function touchAngle(first, second) {
+        return Math.atan2(second.y - first.y, second.x - first.x) * 180 / Math.PI;
+      }
+
+      function designTouchPair() {
+        const points = [...activeDesignTouches.values()];
+        return points.length >= 2 ? [points[0], points[1]] : null;
+      }
+
+      function beginDesignPinch() {
+        const pair = designTouchPair();
+
+        if (!pair || !activeDesign) {
+          return false;
+        }
+
+        pinchingDesign = true;
+        dragging = false;
+        resizing = false;
+        rotating = false;
+        draggingFromCanvas = false;
+        controls.enabled = false;
+        pinchStartDistance = Math.max(1, touchDistance(pair[0], pair[1]));
+        pinchStartScale = scale;
+        pinchStartAngle = touchAngle(pair[0], pair[1]);
+        pinchStartRotation = artRotation;
+        dragMoved = true;
+        return true;
+      }
+
+      function updateDesignPinch() {
+        if (!pinchingDesign) {
+          return;
+        }
+
+        const pair = designTouchPair();
+
+        if (!pair) {
+          return;
+        }
+
+        const nextDistance = Math.max(1, touchDistance(pair[0], pair[1]));
+        const nextAngle = touchAngle(pair[0], pair[1]);
+        setScale(pinchStartScale * (nextDistance / pinchStartDistance), false);
+        artRotation = pinchStartRotation - (nextAngle - pinchStartAngle);
+        renderArtTransform(false);
+        updateDecalDraftFromOverlay();
+      }
+
+      function endDesignPinch() {
+        if (!pinchingDesign) {
+          return;
+        }
+
+        pinchingDesign = false;
+        controls.enabled = true;
+        lastDraftDecalUpdate = 0;
+        updateDecalFromOverlay();
+      }
+
       function beginDesignDrag(event, handle, fromCanvas = false) {
         if (!activeDesign) {
           return;
@@ -3249,14 +3767,52 @@
           return;
         }
 
+        if (event.pointerType === "touch") {
+          activeDesignTouches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          printZone.setPointerCapture(event.pointerId);
+
+          if (activeDesignTouches.size >= 2) {
+            beginDesignPinch();
+            event.preventDefault();
+            return;
+          }
+        }
+
         beginDesignDrag(event, printZone);
       });
 
       printZone.addEventListener("pointermove", (event) => {
+        if (activeDesignTouches.has(event.pointerId)) {
+          activeDesignTouches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        }
+
+        if (pinchingDesign) {
+          updateDesignPinch();
+          event.preventDefault();
+          return;
+        }
+
         moveDesignDrag(event);
       });
 
-      printZone.addEventListener("pointerup", () => {
+      printZone.addEventListener("pointerup", (event) => {
+        activeDesignTouches.delete(event.pointerId);
+
+        if (pinchingDesign && activeDesignTouches.size < 2) {
+          endDesignPinch();
+          return;
+        }
+
+        endDesignDrag();
+      });
+
+      printZone.addEventListener("pointercancel", (event) => {
+        activeDesignTouches.delete(event.pointerId);
+
+        if (activeDesignTouches.size < 2) {
+          endDesignPinch();
+        }
+
         endDesignDrag();
       });
 
@@ -3429,6 +3985,21 @@
       }
 
       removeWhiteBackground.addEventListener("change", renderRemoveBackgroundToggle);
+      shirtQuantity.addEventListener("input", renderPriceEstimate);
+      printFormat.addEventListener("change", renderPriceEstimate);
+      addToCart.addEventListener("click", addEstimateToCart);
+      colorToggle.addEventListener("click", (event) => {
+        stageColorPopover.hidden = !stageColorPopover.hidden;
+        event.stopPropagation();
+      });
+      stageColorPopover.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest("#stageColorPicker")) {
+          stageColorPopover.hidden = true;
+        }
+      });
 
       document.querySelectorAll(".swatch").forEach((button) => {
         button.addEventListener("click", () => {
@@ -3436,6 +4007,8 @@
           button.classList.add("active");
           root.style.setProperty("--shirt-color", button.dataset.color);
           setModelColor(button.dataset.color);
+          renderColorToggle();
+          stageColorPopover.hidden = true;
         });
       });
 
@@ -3648,7 +4221,7 @@
         });
       });
 
-      addTextDesign.addEventListener("click", () => {
+      addTextDesign.addEventListener("click", async () => {
         const value = textInput.value.trim();
 
         if (!value) {
@@ -3656,6 +4229,7 @@
           return;
         }
 
+        await ensureCanvasFontReady(fontSelect.value);
         const textDesign = createTextDecalTexture(value, fontSelect.value, textColor.value);
         addTextureAsDesign(
           textDesign.texture,
@@ -3663,6 +4237,7 @@
           {
             frameShape: "text",
             frameRatio: textDesign.frameRatio,
+            ...defaultPrintSizeForShape("text", textDesign.frameRatio),
             scale: 1
           }
         );
@@ -3685,12 +4260,15 @@
         event.stopPropagation();
       });
       const initialCategory = new URLSearchParams(window.location.search).get("category") || "popular";
+      document.fonts?.load("700 170px Caveat");
       showDesignCategory(initialCategory);
       setActiveSide("front");
       setMiniDesignContent();
       renderArtTransform();
       renderArtMode();
       renderRemoveBackgroundToggle();
+      placeStageControls();
+      renderPriceEstimate();
     </script>
   </body>
 </html>
